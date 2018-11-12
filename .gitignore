@@ -4,3 +4,4 @@
 /logs
 /muted-channels.list
 /admin.list
+/modules/__pycache__/
