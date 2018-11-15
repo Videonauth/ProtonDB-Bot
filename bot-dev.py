@@ -18,13 +18,14 @@ import steamfront
 from steamfront import errors
 import modules.core as core
 import logging
+import re
 
 # import sqlite3
 # import os
 
 # debug mode
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # Loading configuration and setting constants
 CONFIG = core.strip_quotes_from_dict(core.file_to_dict('bot-dev.config'))
@@ -82,6 +83,8 @@ if DEBUG_MODE:
     print(f'MUTED_CHANNELS = {MUTED_CHANNELS}\n' +
           f'MUTE_EXCEPTIONS = {MUTE_EXCEPTIONS}\n' +
           f'ADMIN_LIST = {ADMIN_LIST}\n')
+
+STRIP_PATTERN = r'[a-z.:/<>?]'
 
 logging.basicConfig(filename='logs/bugtracker.log', level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
 
@@ -334,10 +337,34 @@ async def search(context, *, search_text=''):
             search_url = f'{GOOGLE_URL}site%3Asteamdb.info+{search_text.replace(" ", "+")}'
             soup = BeautifulSoup(requests.get(url=search_url).text, 'lxml')
             try:
-                search_result = str(soup.find_all('cite')[0])
-                search_result = search_result.strip('<cite>https://steamdb.info/app/')
-                search_result = search_result.strip('</cite>')
-                game = steam_client.getApp(appid=search_result)
+                for cite in soup.find_all('cite'):
+                    print(cite)
+                    print(str(cite).find('/app/'))
+                    if int(str(cite).find('/app/')) != -1:
+                        search_result = str(cite)  # str(soup.find_all('cite')[0])
+                        search_result = search_result.strip('<cite>https://steamdb.info/app/')
+                        search_result = search_result.strip('/</cite>')
+                        search_result = str(re.sub(STRIP_PATTERN, '', search_result))
+                        print(search_result)
+                        game = steam_client.getApp(appid=search_result)
+            except (IndexError, TypeError, errors.AppNotFound) as e:
+                print(e)
+                game = None
+        if game is None:
+            # Try a google search for 'site:steamdb.info+search_text
+            search_url = f'{GOOGLE_URL}site%3Asteamdb.info+{search_text.replace(" ", "+")}'
+            soup = BeautifulSoup(requests.get(url=search_url).text, 'lxml')
+            try:
+                for cite in soup.find_all('cite'):
+                    print(cite)
+                    print(str(cite).find('sub'))
+                    if int(str(cite).find('sub')) != -1:
+                        search_result = str(cite)  # str(soup.find_all('cite')[0])
+                        search_result = search_result.strip('<cite>https://steamdb.info/app/')
+                        search_result = search_result.strip('/</cite>')
+                        search_result = re.sub(STRIP_PATTERN, '', search_result)
+                        print(search_result)
+                        game = steam_client.getApp(appid=search_result)
             except (IndexError, TypeError, errors.AppNotFound):
                 game = None
         if game is None:
@@ -345,10 +372,33 @@ async def search(context, *, search_text=''):
             search_url = f'{GOOGLE_URL}site%3Astore.steampowered.com+{search_text.replace(" ", "+")}'
             soup = BeautifulSoup(requests.get(url=search_url).text, 'lxml')
             try:
-                search_result = str(soup.find_all('cite')[0])
-                search_result = search_result.strip('<cite>https://store.steampowered.com/forums/?AppId=<b>')
-                search_result = search_result.strip('</b></cite>')
-                game = steam_client.getApp(appid=search_result)
+                for cite in soup.find_all('cite'):
+                    print(cite)
+                    print(str(cite).find('AppId'))
+                    if int(str(cite).find('AppId')) != -1:
+                        search_result = str(cite)   # str(soup.find_all('cite')[0])
+                        # search_result = search_result.strip('<cite>https://store.steampowered.com/forums/?AppId=<b>')
+                        # search_result = search_result.strip('</b></cite>')
+                        search_result = re.sub(STRIP_PATTERN, '', search_result)
+                        print(search_result)
+                        game = steam_client.getApp(appid=search_result)
+            except (IndexError, TypeError, errors.AppNotFound):
+                game = None
+        if game is None:
+            # Try a google search for 'site:store.steampowered.com+search_text
+            search_url = f'{GOOGLE_URL}site%3Astore.steampowered.com+{search_text.replace(" ", "+")}'
+            soup = BeautifulSoup(requests.get(url=search_url).text, 'lxml')
+            try:
+                for cite in soup.find_all('cite'):
+                    print(cite)
+                    print(str(cite).find('/sub/'))
+                    if int(str(cite).find('/sub/')) != -1:
+                        search_result = str(cite)   # str(soup.find_all('cite')[0])
+                        # search_result = search_result.strip('<cite>https://store.steampowered.com/sub/')
+                        # search_result = search_result.strip('/</cite>')
+                        search_result = re.sub(STRIP_PATTERN, '', search_result)
+                        print(search_result)
+                        game = steam_client.getApp(appid=search_result)
             except (IndexError, TypeError, errors.AppNotFound):
                 game = None
         if game is None:
