@@ -347,6 +347,8 @@ async def search(context, *, search_text=''):
                         search_result = str(re.sub(STRIP_PATTERN, '', search_result))
                         print(search_result)
                         game = steam_client.getApp(appid=search_result)
+                        print('beep')
+                        break
             except (IndexError, TypeError, errors.AppNotFound) as e:
                 print(e)
                 game = None
@@ -365,6 +367,8 @@ async def search(context, *, search_text=''):
                         search_result = re.sub(STRIP_PATTERN, '', search_result)
                         print(search_result)
                         game = steam_client.getApp(appid=search_result)
+                        print('beep')
+                        break
             except (IndexError, TypeError, errors.AppNotFound):
                 game = None
         if game is None:
@@ -382,6 +386,8 @@ async def search(context, *, search_text=''):
                         search_result = re.sub(STRIP_PATTERN, '', search_result)
                         print(search_result)
                         game = steam_client.getApp(appid=search_result)
+                        print('beep')
+                        break
             except (IndexError, TypeError, errors.AppNotFound):
                 game = None
         if game is None:
@@ -399,6 +405,8 @@ async def search(context, *, search_text=''):
                         search_result = re.sub(STRIP_PATTERN, '', search_result)
                         print(search_result)
                         game = steam_client.getApp(appid=search_result)
+                        print('beep')
+                        break
             except (IndexError, TypeError, errors.AppNotFound):
                 game = None
         if game is None:
