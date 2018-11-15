@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # ---------------------------------------------------------------------------
-# ubuntu-sources-tool - core.py
+# ProtonDB Bot - core.py
 # ---------------------------------------------------------------------------
 # Author: Videonauth <videonauth@googlemail.com>
 # License: MIT (see LICENSE file)
-# Date: 10.12.17 - 11:20
+# Date: 09.11.18 - 15:01
 # Purpose: -
 # Written for: Python 3.6.3
 # ---------------------------------------------------------------------------
