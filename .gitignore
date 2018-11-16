@@ -4,5 +4,8 @@
 /logs
 /muted-channels.list
 /admin.list
-
 /modules/__pycache__/
+/muted-channels-dev.list
+/admin-dev.list
+/bot.py.001
+extensions/
