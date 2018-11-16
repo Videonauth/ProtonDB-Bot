@@ -26,7 +26,7 @@ import re
 # debug mode
 
 DEBUG_MODE = True
-test
+
 # Loading configuration and setting constants
 CONFIG = core.strip_quotes_from_dict(core.file_to_dict('bot-dev.config'))
 BOT_TOKEN = CONFIG.get('BOT_TOKEN')
