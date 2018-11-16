@@ -11,7 +11,7 @@
 # ---------------------------------------------------------------------------
 from json import JSONDecodeError
 from bs4 import BeautifulSoup
-import discord
+# import discord
 from discord.ext.commands import Bot
 import requests
 import steamfront
@@ -23,8 +23,10 @@ import re
 # import sqlite3
 # import os
 
-# debug mode
+# version string
+__version__ = '0.0.17'
 
+# debug mode
 DEBUG_MODE = True
 
 # Loading configuration and setting constants
@@ -86,7 +88,9 @@ if DEBUG_MODE:
 
 STRIP_PATTERN = r'[a-z.:/<>?]'
 
-logging.basicConfig(filename='logs/bugtracker-dev.log', level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
+logging.basicConfig(filename='logs/bugtracker-dev.log',
+                    level=logging.ERROR,
+                    format='%(asctime)s %(levelname)s:%(message)s')
 
 
 # When bot is loaded up
@@ -321,7 +325,7 @@ async def search(context, *, search_text=''):
     if search_text is not '':
         # If got a search string
         if game is None:
-            # Assume saerch_string is a number and try a steamfront search for AppId
+            # Assume search_string is a number and try a steamfront search for AppId
             try:
                 game = steam_client.getApp(appid=search_text)
             except (IndexError, TypeError, errors.AppNotFound):
