@@ -19,7 +19,6 @@ from steamfront import errors
 import modules.core as core
 import logging
 import re
-
 # import sqlite3
 # import os
 
@@ -156,6 +155,13 @@ async def bot(context, command='', *, message=''):
                  f'The following people are bot admins:\n'
         for admin in ADMIN_LIST:
             output += f'@{admin}\n'
+        await bot_client.say(output)
+        return
+
+    # everyone can request bot version
+    if command == 'version':
+        output= f'{context.message.author.mention} ' +\
+                f'Bot version: {__version__}'
         await bot_client.say(output)
         return
 
