@@ -65,19 +65,19 @@ if DEBUG_MODE:
           f'steam_client = {steam_client}\n')
 
 # Lists for management
-if core.file_exists('muted-channels.list'):
-    MUTED_CHANNELS = core.file_to_list('muted-channels.list')
+if core.file_exists('muted-channels-dev.list'):
+    MUTED_CHANNELS = core.file_to_list('muted-channels-dev.list')
 else:
     MUTED_CHANNELS = []
-    core.list_to_file(MUTED_CHANNELS, 'muted-channels.list')
+    core.list_to_file(MUTED_CHANNELS, 'muted-channels-dev.list')
 
 MUTE_EXCEPTIONS = ['Text Channels', 'Voice Channels', 'General']
 ADMIN_LIST = []
 
-if core.file_exists('admin.list'):
-    ADMIN_LIST = core.file_to_list('admin.list')
+if core.file_exists('admin-dev.list'):
+    ADMIN_LIST = core.file_to_list('admin-dev.list')
 else:
-    core.list_to_file([], 'admin.list')
+    core.list_to_file([], 'admin-dev.list')
 
 if DEBUG_MODE:
     print(f'MUTED_CHANNELS = {MUTED_CHANNELS}\n' +
@@ -86,7 +86,7 @@ if DEBUG_MODE:
 
 STRIP_PATTERN = r'[a-z.:/<>?]'
 
-logging.basicConfig(filename='logs/bugtracker.log', level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
+logging.basicConfig(filename='logs/bugtracker-dev.log', level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
 
 
 # When bot is loaded up
@@ -165,7 +165,7 @@ async def bot(context, command='', *, message=''):
         if message != '':
             if message in ADMIN_LIST:
                 ADMIN_LIST.remove(message)
-                core.list_to_file(ADMIN_LIST, 'admin.list')
+                core.list_to_file(ADMIN_LIST, 'admin-dev.list')
                 await bot_client.say(f'{context.message.author.mention} ' +
                                      f'removed {message} successfully from admin list!')
                 return
@@ -188,7 +188,7 @@ async def bot(context, command='', *, message=''):
         if message != '':
             if message not in ADMIN_LIST:
                 ADMIN_LIST.append(message)
-                core.list_to_file(ADMIN_LIST, 'admin.list')
+                core.list_to_file(ADMIN_LIST, 'admin-dev.list')
                 await bot_client.say(f'{context.message.author.mention} ' +
                                      f'added {message} successfully to admin list!')
                 return
@@ -216,7 +216,7 @@ async def bot(context, command='', *, message=''):
         if message != '':
             if message in MUTED_CHANNELS:
                 MUTED_CHANNELS.remove(message)
-                core.list_to_file(MUTED_CHANNELS, 'muted-channels.list')
+                core.list_to_file(MUTED_CHANNELS, 'muted-channels-dev.list')
                 await bot_client.say(f'{context.message.author.mention} ' +
                                      f'"{message}" was removed from the muted channels!')
                 return
@@ -227,7 +227,7 @@ async def bot(context, command='', *, message=''):
         else:
             if str(context.message.channel) in MUTED_CHANNELS:
                 MUTED_CHANNELS.remove(str(context.message.channel))
-                core.list_to_file(MUTED_CHANNELS, 'muted-channels.list')
+                core.list_to_file(MUTED_CHANNELS, 'muted-channels-dev.list')
                 await bot_client.say(f'{context.message.author.mention} ' +
                                      f'"{str(context.message.channel)}" ' +
                                      f'was removed from the muted channels!')
@@ -258,7 +258,7 @@ async def bot(context, command='', *, message=''):
             if message in channel_list:
                 if message not in MUTED_CHANNELS:
                     MUTED_CHANNELS.append(message)
-                    core.list_to_file(MUTED_CHANNELS, 'muted-channels.list')
+                    core.list_to_file(MUTED_CHANNELS, 'muted-channels-dev.list')
                     await bot_client.say(f'{context.message.author.mention} ' +
                                          f'"{message}" was added to the muted channels!')
                     return
@@ -274,7 +274,7 @@ async def bot(context, command='', *, message=''):
             if str(context.message.channel) not in MUTE_EXCEPTIONS:
                 if str(context.message.channel) not in MUTED_CHANNELS:
                     MUTED_CHANNELS.append(str(context.message.channel))
-                    core.list_to_file(MUTED_CHANNELS, 'muted-channels.list')
+                    core.list_to_file(MUTED_CHANNELS, 'muted-channels-dev.list')
                     await bot_client.say(f'{context.message.author.mention} ' +
                                          f'"{str(context.message.channel)}" ' +
                                          f'was added to the muted channels!')
