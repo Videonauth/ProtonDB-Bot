@@ -33,7 +33,7 @@ CONFIG = core.strip_quotes_from_dict(core.file_to_dict('bot-dev.config'))
 BOT_TOKEN = CONFIG.get('BOT_TOKEN')
 BOT_PREFIX = CONFIG.get('BOT_PREFIX')
 BOT_OWNER = CONFIG.get('BOT_OWNER')
-BOT_LIST = ['ProtonDB Bot BETA#9278', 'ProtonDB Bot#7175']
+BOT_LIST = CONFIG.get('BOT_LIST')
 
 if DEBUG_MODE:
     print(f'BOT_TOKEN = {BOT_TOKEN}\n' +
@@ -56,7 +56,6 @@ if DEBUG_MODE:
 # Generating clients
 bot_client = Bot(command_prefix=BOT_PREFIX)
 steam_client = steamfront.Client()
-# db_client = sqlite3.connect('cache.sql')
 
 # removing general help command
 # bot_client.remove_command('help')
@@ -160,7 +159,7 @@ async def bot(context, command='', *, message=''):
 
     # everyone can request bot version
     if command == 'version':
-        output= f'{context.message.author.mention} ' +\
+        output = f'{context.message.author.mention} ' +\
                 f'Bot version: {__version__}'
         await bot_client.say(output)
         return
