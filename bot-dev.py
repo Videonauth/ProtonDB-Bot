@@ -22,7 +22,7 @@ import re
 
 # import sqlite3
 # import os
-# test
+
 # debug mode
 
 DEBUG_MODE = True
@@ -58,7 +58,7 @@ steam_client = steamfront.Client()
 # db_client = sqlite3.connect('cache.sql')
 
 # removing general help command
-bot_client.remove_command('help')
+# bot_client.remove_command('help')
 
 if DEBUG_MODE:
     print(f'bot_client = {bot_client}\n' +
@@ -116,21 +116,21 @@ async def on_reaction_add(reaction, user):
 
 
 # Command !bothelp
-@bot_client.command(pass_context=True)
-async def bothelp(context):
-    if DEBUG_MODE:
-        print(f'context.message.author = {context.message.author}\n' +
-              f'context.message.server = {context.message.server}\n' +
-              f'context.message.channel = {context.message.channel}\n' +
-              f'context.message.content = {context.message.content}\n')
-
-    help_text = discord.Embed(
-        color=discord.Colour.orange()
-    )
-    help_text.set_author(name='Help')
-    help_text.add_field(name='bot', value='bot basis functions', inline=False)
-    # await bot_client.send_message(context.message.author, embed=help_text)
-    await bot_client.say(embed=help_text)
+# @bot_client.command(pass_context=True)
+# async def bothelp(context):
+#     if DEBUG_MODE:
+#         print(f'context.message.author = {context.message.author}\n' +
+#               f'context.message.server = {context.message.server}\n' +
+#               f'context.message.channel = {context.message.channel}\n' +
+#               f'context.message.content = {context.message.content}\n')
+#
+#     help_text = discord.Embed(
+#         color=discord.Colour.orange()
+#     )
+#     help_text.set_author(name='Help')
+#     help_text.add_field(name='bot', value='bot basis functions', inline=False)
+#     # await bot_client.send_message(context.message.author, embed=help_text)
+#     await bot_client.say(embed=help_text)
 
 
 # Bot commands !bot <command>
