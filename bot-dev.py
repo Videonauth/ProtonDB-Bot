@@ -9,11 +9,11 @@
 # Purpose: -
 # Written for: Python 3.6.3
 # ---------------------------------------------------------------------------
+
 from json import JSONDecodeError
-from bs4 import BeautifulSoup
-# import discord
 from discord.ext.commands import Bot
 import requests
+from bs4 import BeautifulSoup
 import steamfront
 from steamfront import errors
 import modules.core as core
