@@ -9,30 +9,31 @@
 # Purpose: -
 # Written for: Python 3.6.3
 # ---------------------------------------------------------------------------
+
 from json import JSONDecodeError
-from bs4 import BeautifulSoup
-import discord
 from discord.ext.commands import Bot
 import requests
+from bs4 import BeautifulSoup
 import steamfront
 from steamfront import errors
 import modules.core as core
 import logging
 import re
-
 # import sqlite3
 # import os
 
-# debug mode
+# version string
+__version__ = '0.0.17'
 
-DEBUG_MODE = False
+# debug mode
+DEBUG_MODE = True
 
 # Loading configuration and setting constants
 CONFIG = core.strip_quotes_from_dict(core.file_to_dict('bot.config'))
 BOT_TOKEN = CONFIG.get('BOT_TOKEN')
 BOT_PREFIX = CONFIG.get('BOT_PREFIX')
 BOT_OWNER = CONFIG.get('BOT_OWNER')
-BOT_LIST = ['ProtonDB Bot BETA#9278', 'ProtonDB Bot#7175']
+BOT_LIST = CONFIG.get('BOT_LIST')
 
 if DEBUG_MODE:
     print(f'BOT_TOKEN = {BOT_TOKEN}\n' +
@@ -55,7 +56,6 @@ if DEBUG_MODE:
 # Generating clients
 bot_client = Bot(command_prefix=BOT_PREFIX)
 steam_client = steamfront.Client()
-# db_client = sqlite3.connect('cache.sql')
 
 # removing general help command
 # bot_client.remove_command('help')
@@ -86,7 +86,9 @@ if DEBUG_MODE:
 
 STRIP_PATTERN = r'[a-z.:/<>?]'
 
-logging.basicConfig(filename='logs/bugtracker.log', level=logging.ERROR, format='%(asctime)s %(levelname)s:%(message)s')
+logging.basicConfig(filename='logs/bugtracker.log',
+                    level=logging.ERROR,
+                    format='%(asctime)s %(levelname)s:%(message)s')
 
 
 # When bot is loaded up
@@ -152,6 +154,13 @@ async def bot(context, command='', *, message=''):
                  f'The following people are bot admins:\n'
         for admin in ADMIN_LIST:
             output += f'@{admin}\n'
+        await bot_client.say(output)
+        return
+
+    # everyone can request bot version
+    if command == 'version':
+        output = f'{context.message.author.mention} ' +\
+                f'Bot version: {__version__}'
         await bot_client.say(output)
         return
 
@@ -321,7 +330,7 @@ async def search(context, *, search_text=''):
     if search_text is not '':
         # If got a search string
         if game is None:
-            # Assume saerch_string is a number and try a steamfront search for AppId
+            # Assume search_string is a number and try a steamfront search for AppId
             try:
                 game = steam_client.getApp(appid=search_text)
             except (IndexError, TypeError, errors.AppNotFound):
