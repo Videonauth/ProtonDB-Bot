@@ -17,10 +17,10 @@ import os
 import datetime
 import json
 # import requests
-# import logging
+import logging
 
 
-def end_program(start_time: int, reason: int, stop_time: int):
+def end_program(start_time: float, reason: int, stop_time: float):
     """
     Ends the program and outputs the time the program has run
 
@@ -79,6 +79,25 @@ def dict_to_json(data: dict, filename: str):
         exit(1)
     else:
         return True
+
+
+def setup_logger(logger_name: str, log_file_name: str, level: int =logging.DEBUG):
+    """
+    Helper function for setting up different loggers.
+
+    :param logger_name: System intern name for getLogger function
+    :param log_file_name: File name for the log file
+    :param level: logging object (<class 'int'>) defining the log level (by default it logs all logging.DEBUG)
+    """
+    _logger = logging.getLogger(logger_name)
+    _formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+    _file_handler = logging.FileHandler(log_file_name, mode='a')
+    _file_handler.setFormatter(_formatter)
+    _stream_handler = logging.StreamHandler()
+    _stream_handler.setFormatter(_formatter)
+    _logger.setLevel(level)
+    _logger.addHandler(_file_handler)
+    _logger.addHandler(_stream_handler)
 
 
 if __name__ == '__main__':
