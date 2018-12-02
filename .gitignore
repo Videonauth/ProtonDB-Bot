@@ -8,5 +8,6 @@
 /muted-channels-dev.list
 /admin-dev.list
 /bot.py.001
-extensions/
-bot-deb.py
+/extensions/
+/bot-dev.py.001
+/.gitignore
