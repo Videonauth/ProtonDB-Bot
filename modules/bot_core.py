@@ -18,6 +18,7 @@ import datetime
 import json
 # import requests
 import logging
+from contextlib import suppress
 
 
 def end_program(start_time: float, reason: int, stop_time: float):
@@ -30,7 +31,8 @@ def end_program(start_time: float, reason: int, stop_time: float):
     """
     print(f'\nProcess finished after {stop_time - start_time} seconds.')
     print(f'Process finished with exit code {reason}.')
-    exit(reason)
+    with suppress(SystemExit):
+        exit(reason)
 
 
 def json_to_dict(filename: str):
