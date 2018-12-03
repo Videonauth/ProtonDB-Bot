@@ -13,7 +13,7 @@
 # system library imports
 # import sys
 import os
-# import time
+import time
 import datetime
 import json
 # import requests
@@ -21,15 +21,14 @@ import logging
 from contextlib import suppress
 
 
-def end_program(start_time: float, reason: int, stop_time: float):
+def end_program(start_time: float, reason: int):
     """
     Ends the program and outputs the time the program has run
 
     :param start_time: Delta time from 'time' library taken when the program was started.
     :param reason: Return code to exit on.
-    :param stop_time: Delta time from 'time' library taken when this function was called.
     """
-    print(f'\nProcess finished after {stop_time - start_time} seconds.')
+    print(f'\nProcess finished after {time.time() - start_time} seconds.')
     print(f'Process finished with exit code {reason}.')
     with suppress(SystemExit):
         exit(reason)
