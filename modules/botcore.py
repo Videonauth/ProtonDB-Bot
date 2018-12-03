@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # ---------------------------------------------------------------------------
-# ProtonDB-Bot - bot_core.py
+# ProtonDB-Bot - botcore.py
 # ---------------------------------------------------------------------------
 # Author: Videonauth <videonauth@googlemail.com>
 # License: MIT (see LICENSE file)
