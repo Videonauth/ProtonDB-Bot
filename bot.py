@@ -43,6 +43,7 @@ if DEBUG_MODE:
 
 # Constants, only change if you know what you're doing
 GOOGLE_URL = 'https://www.google.com/search?safe=off&q='
+DUCK_URL = 'https://duckduckgo.com/?q='
 STEAM_URL = 'https://store.steampowered.com/app/'
 STEAMDB_URL = 'https://steamdb.info/app/'
 PROTONDB_URL = 'https://www.protondb.com/api/v1/reports/summaries/'
@@ -425,7 +426,8 @@ async def search(context, *, search_text=''):
             output += f'best see for yourself.\n'
             # output += f'{GOOGLE_URL}site%3Asteamdb.info+{search_text.replace(" ", "+")}\n'
             # output += f'{GOOGLE_URL}site%3Astore.steampowered.com+{search_text.replace(" ", "+")}\n'
-            output += f'{GOOGLE_URL}{search_text.replace(" ", "+")}\n'
+            output += f'{GOOGLE_URL}{search_text.replace(" ", "+")}\n\n'
+            output += f'{DUCK_URL}{search_text.replace(" ", "+")}\n'
             output += f'Remember you can always do a search for AppID "!search <AppID>"\n'
             await bot_client.say(output)
             return
