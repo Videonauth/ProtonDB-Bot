@@ -420,7 +420,6 @@ async def search(context, *, search_text=''):
             except (IndexError, TypeError, errors.AppNotFound):
                 game = None
         if game is None:
-            # TODO: expand search
             # After all searches failed output a message
             output += f'{context.message.author.mention} This is no game as far I found out,'
             output += f'best see for yourself.\n'

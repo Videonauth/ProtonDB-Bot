@@ -156,7 +156,6 @@ def who_am_i():
 
 
 def get_file_permissions(name):
-    # TODO: parse the permissions to a proper format (get_file_permissions)
     return stat.filemode(os.stat(name).st_mode)
 
 
