@@ -82,7 +82,7 @@ def dict_to_json(data: dict, filename: str):
         return True
 
 
-def setup_logger(logger_name: str, log_file_name: str, level: int =logging.DEBUG):
+def setup_logger(logger_name: str, log_file_name: str, level: int = logging.DEBUG):
     """
     Helper function for setting up different loggers.
 
