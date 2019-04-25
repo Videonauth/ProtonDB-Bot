@@ -169,7 +169,7 @@ def end_program(start_time: float, reason: int):
         exit(reason)
 
 
-def json_to_dict(filename: str):
+def json_to_dict(filename: str) -> dict:
     """
     Loads a .json file and returns a dictionary on success.
 
