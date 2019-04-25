@@ -22,6 +22,19 @@ import logging
 from contextlib import suppress
 
 
+def add_to_dict(dictionary_item: dict, key: str, value) -> dict:
+    """
+    Adding a key,value pair to a dictionary then return it.
+
+    :param dictionary_item:
+    :param key:
+    :param value:
+    :return dict:
+    """
+    dictionary_item.update({key: value})
+    return dictionary_item
+
+
 def strip_newline(lines):
     return list(map(lambda x: x.strip('\n'), lines))
 
