@@ -35,6 +35,16 @@ def add_to_dict(dictionary_item: dict, key: str, value) -> dict:
     return dictionary_item
 
 
+def dump_dict_pretty(dictionary_item: dict):
+    """
+    Dumps the given dictionary to st_out
+
+    :param dictionary_item:
+    """
+    for _key, _value in dictionary_item.items():
+        print(f'{_key} = {_value}')
+
+
 def strip_newline(lines):
     return list(map(lambda x: x.strip('\n'), lines))
 
