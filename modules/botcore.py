@@ -73,9 +73,9 @@ def dict_add(dict_item: dict, key: str, value) -> dict:
 
 def dict_dump_stdout(dict_item: dict):
     """
-    Dumps the given dictionary to st_out
+    Dumps the given dictionary to stdout.
 
-    :param dict_item:
+    :param dict_item: A dictionary to be dumped on screen.
     """
     for _key, _value in dict_item.items():
         print(f'{_key} = {_value}')
