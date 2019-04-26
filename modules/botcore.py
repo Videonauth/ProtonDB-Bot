@@ -49,7 +49,7 @@ def dict_update(dict_item: dict, key: str, value) -> dict:
     :param dict_item: A dict object to be changed.
     :param key: Key to be changed.
     :param value: Value to be inserted into key.
-    :return dict: A changed dict object
+    :return dict: The changed dict object.
     """
     dict_item.update({key: value})
     return dict_item
