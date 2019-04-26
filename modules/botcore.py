@@ -22,9 +22,28 @@ import logging
 from contextlib import suppress
 
 
-def add_to_dict(dictionary_item: dict, key: str, value) -> dict:
+def list_strip_all_newline(item: list) -> list:
     """
-    Adding a key,value pair to a dictionary then return it.
+    Strips all newline characters '\n' from all items in list object.
+
+    :param item: A list object to be cleaned from newline characters.
+    :return list: A list object which has been cleaned.
+    """
+    return list(map(lambda x: x.strip('\n'), item))
+
+
+def list_append_all_newline(item: list) -> list:
+    """
+
+    :param item:
+    :return list:
+    """
+    return list(map(lambda x: f'{x}\n', item))
+
+
+def dict_update(dictionary_item: dict, key: str, value) -> dict:
+    """
+    Updating a key,value pair to a dictionary then return it.
 
     :param dictionary_item:
     :param key:
@@ -35,7 +54,20 @@ def add_to_dict(dictionary_item: dict, key: str, value) -> dict:
     return dictionary_item
 
 
-def dump_dict_pretty(dictionary_item: dict):
+def dict_add(dictionary_item: dict, key: str, value) -> dict:
+    """
+    A synonym of dict_update. Simply passes along data. Remember keys are unique so if you pass an existing key
+    you will simply update/replace it.
+
+    :param dictionary_item:
+    :param key:
+    :param value:
+    :return dict:
+    """
+    return dict_update(dictionary_item, key, value)
+
+
+def dict_dump_stdout(dictionary_item: dict):
     """
     Dumps the given dictionary to st_out
 
@@ -43,14 +75,6 @@ def dump_dict_pretty(dictionary_item: dict):
     """
     for _key, _value in dictionary_item.items():
         print(f'{_key} = {_value}')
-
-
-def strip_newline(lines):
-    return list(map(lambda x: x.strip('\n'), lines))
-
-
-def append_newline(lines):
-    return list(map(lambda x: f'{x}\n', lines))
 
 
 def strip_quotes_from_dict(dictionary_item):
@@ -105,7 +129,7 @@ def file_to_list(name):
         print(f'{datetime.datetime.today()} {error}')
         exit(1)
     else:
-        return strip_newline(_lines)
+        return list_strip_all_newline(_lines)
 
 
 def list_to_dict(list_item, delimiter='='):
@@ -138,7 +162,7 @@ def file_to_dict(name):
 
 def list_to_file(list_item, name):
     _time = time.time()
-    list_item = append_newline(list_item)
+    list_item = list_append_all_newline(list_item)
     try:
         with open(name, 'x') as file:
             file.writelines(list_item)
