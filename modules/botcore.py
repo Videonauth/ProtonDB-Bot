@@ -11,14 +11,16 @@
 # ---------------------------------------------------------------------------
 
 # system library imports
-# import sys
+import sys
 import os
 import time
 import datetime
 import json
 import stat
-# import requests
+import requests
 import logging
+import shutil
+import subprocess
 from contextlib import suppress
 
 
@@ -35,7 +37,7 @@ def list_strip_all_newline(list_item: list) -> list:
 def list_append_all_newline(list_item: list) -> list:
     """
     Appends a newline character '\n' to every list_item in list object.
-    
+
     :param list_item: A list object to append newlines to.
     :return list: A list object with newlines appended.
     """
@@ -44,7 +46,8 @@ def list_append_all_newline(list_item: list) -> list:
 
 def dict_update(dict_item: dict, key: str, value) -> dict:
     """
-    Updating a key,value pair to a dictionary then return it.
+    Updating a key,value pair to a dictionary then return it. Remember keys are unique so if you not pass the exact key
+    you wil generate a new one.
 
     :param dict_item: A dict object to be changed.
     :param key: Key to be changed.
