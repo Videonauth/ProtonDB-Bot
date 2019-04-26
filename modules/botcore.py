@@ -101,6 +101,13 @@ def dict_strip_quotes(dict_item: dict) -> dict:
 
 
 def dict_to_list(dict_item: dict, delimiter: str = '=') -> list:
+    """
+    Convert a dict object into a list object using delimiter as separator.
+
+    :param dict_item: A dictionary to be converted.
+    :param delimiter: A separating delimiter to use. Default is '='.
+    :return list: A list object containing dict_item joined by delimiter.
+    """
     _output = []
     for _key, _value in dict_item.items():
         _output.append(f'{_key}{delimiter}{_value}')
