@@ -82,6 +82,12 @@ def dict_dump_stdout(dict_item: dict):
 
 
 def dict_strip_quotes(dict_item: dict) -> dict:
+    """
+    Strips quote characters from dict values.
+
+    :param dict_item: A dictionary to work with.
+    :return dict: A dictionary with quotes stripped.
+    """
     _output = dict()
     delimiter = '\"'
     for _key, _value in dict_item.items():
