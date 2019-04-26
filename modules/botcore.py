@@ -100,7 +100,7 @@ def dict_strip_quotes(dict_item: dict) -> dict:
     return _output
 
 
-def dict_to_list(dict_item, delimiter='='):
+def dict_to_list(dict_item: dict, delimiter: str = '=') -> list:
     _output = []
     for _key, _value in dict_item.items():
         _output.append(f'{_key}{delimiter}{_value}')
