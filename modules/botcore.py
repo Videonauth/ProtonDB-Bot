@@ -81,7 +81,7 @@ def dict_dump_stdout(dict_item: dict):
         print(f'{_key} = {_value}')
 
 
-def strip_quotes_from_dict(dict_item):
+def dict_strip_quotes(dict_item: dict) -> dict:
     _output = dict()
     delimiter = '\"'
     for _key, _value in dict_item.items():
