@@ -71,20 +71,20 @@ def dict_add(dict_item: dict, key: str, value) -> dict:
     return dict_update(dict_item, key, value)
 
 
-def dict_dump_stdout(dictionary_item: dict):
+def dict_dump_stdout(dict_item: dict):
     """
     Dumps the given dictionary to st_out
 
-    :param dictionary_item:
+    :param dict_item:
     """
-    for _key, _value in dictionary_item.items():
+    for _key, _value in dict_item.items():
         print(f'{_key} = {_value}')
 
 
-def strip_quotes_from_dict(dictionary_item):
+def strip_quotes_from_dict(dict_item):
     _output = dict()
     delimiter = '\"'
-    for _key, _value in dictionary_item.items():
+    for _key, _value in dict_item.items():
         _output.update({_key: _value.strip(delimiter)})
     _tmp = _output
     _output = dict()
@@ -94,29 +94,29 @@ def strip_quotes_from_dict(dictionary_item):
     return _output
 
 
-def dict_to_list(dictionary_item, delimiter='='):
+def dict_to_list(dict_item, delimiter='='):
     _output = []
-    for _key, _value in dictionary_item.items():
+    for _key, _value in dict_item.items():
         _output.append(f'{_key}{delimiter}{_value}')
     return _output
 
 
-def dict_get_key_for_value(dictionary_item, value):
-    for _key, _value in dictionary_item.items():
+def dict_get_key_for_value(dict_item, value):
+    for _key, _value in dict_item.items():
         if _value == value:
             return _key
     return None
 
 
-def dict_get_value_for_key(dictionary_item, key):
-    for _key, _value in dictionary_item.items():
+def dict_get_value_for_key(dict_item, key):
+    for _key, _value in dict_item.items():
         if _key == key:
             return _value
     return None
 
 
-def dict_is_all_none(dictionary_item):
-    for _key, _value in dictionary_item.items():
+def dict_is_all_none(dict_item):
+    for _key, _value in dict_item.items():
         if _value is not None:
             return False
     return True
@@ -144,8 +144,8 @@ def list_to_dict(list_item, delimiter='='):
     return _output
 
 
-def dict_to_stdout(dictionary_item):
-    for _key, _value in dictionary_item.items():
+def dict_to_stdout(dict_item):
+    for _key, _value in dict_item.items():
         print(f'{_key}: {_value}')
     return True
 
@@ -188,8 +188,8 @@ def list_to_file(list_item, name):
         return True
 
 
-def dict_to_file(dictionary_item, name):
-    list_to_file(dict_to_list(dictionary_item), name)
+def dict_to_file(dict_item, name):
+    list_to_file(dict_to_list(dict_item), name)
 
 
 def i_am_root():
