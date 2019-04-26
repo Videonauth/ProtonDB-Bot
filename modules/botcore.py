@@ -22,36 +22,37 @@ import logging
 from contextlib import suppress
 
 
-def list_strip_all_newline(item: list) -> list:
+def list_strip_all_newline(list_item: list) -> list:
     """
-    Strips all newline characters '\n' from all items in list object.
+    Strips all newline characters '\n' from all list_items in list object.
 
-    :param item: A list object to be cleaned from newline characters.
+    :param list_item: A list object to be cleaned from newline characters.
     :return list: A list object which has been cleaned.
     """
-    return list(map(lambda x: x.strip('\n'), item))
+    return list(map(lambda x: x.strip('\n'), list_item))
 
 
-def list_append_all_newline(item: list) -> list:
+def list_append_all_newline(list_item: list) -> list:
     """
-
-    :param item:
-    :return list:
+    Appends a newline character '\n' to every list_item in list object.
+    
+    :param list_item: A list object to append newlines to.
+    :return list: A list object with newlines appended.
     """
-    return list(map(lambda x: f'{x}\n', item))
+    return list(map(lambda x: f'{x}\n', list_item))
 
 
-def dict_update(dictionary_item: dict, key: str, value) -> dict:
+def dict_update(dict_item: dict, key: str, value) -> dict:
     """
     Updating a key,value pair to a dictionary then return it.
 
-    :param dictionary_item:
+    :param dict_item:
     :param key:
     :param value:
     :return dict:
     """
-    dictionary_item.update({key: value})
-    return dictionary_item
+    dict_item.update({key: value})
+    return dict_item
 
 
 def dict_add(dictionary_item: dict, key: str, value) -> dict:
