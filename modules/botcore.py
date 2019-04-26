@@ -58,17 +58,17 @@ def dict_update(dict_item: dict, key: str, value) -> dict:
     return dict_item
 
 
-def dict_add(dictionary_item: dict, key: str, value) -> dict:
+def dict_add(dict_item: dict, key: str, value) -> dict:
     """
     A synonym of dict_update. Simply passes along data. Remember keys are unique so if you pass an existing key
     you will simply update/replace it.
 
-    :param dictionary_item:
-    :param key:
-    :param value:
-    :return dict:
+    :param dict_item: A dict object to be passed through to dict_update.
+    :param key: A key value to be passed through to dict_update.
+    :param value: The value to be passed through to dict_update.
+    :return dict: The return value of dict_update
     """
-    return dict_update(dictionary_item, key, value)
+    return dict_update(dict_item, key, value)
 
 
 def dict_dump_stdout(dictionary_item: dict):
