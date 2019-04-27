@@ -114,7 +114,14 @@ def dict_to_list(dict_item: dict, delimiter: str = '=') -> list:
     return _output
 
 
-def dict_get_key_for_value(dict_item, value):
+def dict_get_key_by_value(dict_item: dict, value) -> str or None:
+    """
+    Finds a key associated to a value if present returns key or None otherwise.
+
+    :param dict_item: A dictionary object to be searched in.
+    :param value: The value to compare.
+    :return str or None: A key as a string or None if not found.
+    """
     for _key, _value in dict_item.items():
         if _value == value:
             return _key
