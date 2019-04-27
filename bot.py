@@ -153,6 +153,7 @@ def write_to_file(file: str, content: str):
 if sys.argv and len(sys.argv) > 1:
     if sys.argv[1] == f'install':
         _install = True
+
 if __name__ == '__main__' and _install:
     bot = dict_update(bot, f'directories_expected', [
         [f'config', f'setup'],
