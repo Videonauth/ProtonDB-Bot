@@ -11,17 +11,39 @@
 # ---------------------------------------------------------------------------
 
 # system library imports
-import sys
+# import sys
 import os
 import time
 import datetime
 import json
 import stat
-import requests
+# import requests
 import logging
-import shutil
+# import shutil
 import subprocess
 from contextlib import suppress
+
+__version__ = f'0.0.17'
+
+
+def bash_command(command: list) -> str or None:
+    """
+    Utility function for running external commands
+
+    :param command: A list object containing the command.
+    :return str or None: A string containing stdout or None.
+    """
+    _new_env = dict(os.environ)
+    _new_env['LC_ALL'] = 'C'
+    try:
+        _stdout = subprocess.check_output(command, env=_new_env)
+    except subprocess.CalledProcessError:
+        return None
+    else:
+        if _stdout:
+            return _stdout
+        else:
+            return None
 
 
 def list_strip_all_newline(list_item: list) -> list:
