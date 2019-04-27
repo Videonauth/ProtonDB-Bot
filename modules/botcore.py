@@ -138,7 +138,7 @@ def dict_to_list(dict_item: dict, delimiter: str = '=') -> list:
 
 def dict_get_key_by_value(dict_item: dict, value) -> str or None:
     """
-    Finds a key associated to a value if present returns key or None otherwise.
+    Finds a key associated to a value if present, returns key or None otherwise.
 
     :param dict_item: A dictionary object to be searched in.
     :param value: The value to compare.
@@ -150,14 +150,27 @@ def dict_get_key_by_value(dict_item: dict, value) -> str or None:
     return None
 
 
-def dict_get_value_for_key(dict_item, key):
+def dict_get_value_by_key(dict_item: dict, key: str) -> bool or int or float or str or list or dict or None :
+    """
+    Finds a value to a key if present, returns key or None otherwise.
+
+    :param dict_item: A dictionary item to be searched in.
+    :param key: The key to search for
+    :return any: The value from key or None.
+    """
     for _key, _value in dict_item.items():
         if _key == key:
             return _value
     return None
 
 
-def dict_is_all_none(dict_item):
+def dict_is_all_none(dict_item: dict) -> bool:
+    """
+    Tests if all dictionary items are None.
+
+    :param dict_item: A dictionary object to be testes.
+    :return bool: True if all keys have None as value, False otherwise
+    """
     for _key, _value in dict_item.items():
         if _value is not None:
             return False
