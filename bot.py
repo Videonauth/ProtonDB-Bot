@@ -150,6 +150,8 @@ def write_to_file(file: str, content: str):
 # Installation procedure (only makes sense when executing bot.py not on
 # import, thus running in its own main request
 # ---------------------------------------------------------------------------
+_install = False
+
 if sys.argv and len(sys.argv) > 1:
     if sys.argv[1] == f'install':
         _install = True
