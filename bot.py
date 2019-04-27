@@ -194,7 +194,7 @@ if __name__ == '__main__':
                 _url = __github__ + _name[0]
                 _content = requests.get(url=_url)
                 print(f'Installing "{_name[0]}" from "{_url}".')
-                write_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content))
+                write_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content.text))
             if _name[1] == f'create':
                 if os.path.exists(f'{bot.get("runtime_path") + _name[2]}'):
                     print(f'Copying file "{bot.get(f"runtime_path") + _name[2]}" to ' +
@@ -206,7 +206,7 @@ if __name__ == '__main__':
                     _url = __github__ + _name[2]
                     _content = requests.get(url=_url)
                     print(f'Installing "{_name[0]}" from "{_url}".')
-                    write_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content))
+                    write_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content.text))
 
 
 if __name__ == '__main__':
