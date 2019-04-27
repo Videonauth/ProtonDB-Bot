@@ -150,7 +150,10 @@ def write_to_file(file: str, content: str):
 # Installation procedure (only makes sense when executing bot.py not on
 # import, thus running in its own main request
 # ---------------------------------------------------------------------------
-if __name__ == '__main__':
+if sys.argv and len(sys.argv) > 1:
+    if sys.argv[1] == f'install':
+        _install = True
+if __name__ == '__main__' and _install:
     bot = dict_update(bot, f'directories_expected', [
         [f'config', f'setup'],
         [f'modules', f'create'],
@@ -171,20 +174,7 @@ if __name__ == '__main__':
     for _directory in bot.get('directories_expected'):
         if not os.path.exists(bot.get('runtime_path') + _directory[0]):
             if _directory[1] == f'setup':
-                print(f'Do you want to install now?')
-                print(f'[y/n][yes/no] return for [n/no]')
-                _input = input(bot.get('prompt'))
-                if _input == '':
-                    print(f'Shutting down.')
-                    exit(0)
-                elif _input == 'n' or _input == 'no':
-                    print(f'Shutting down.')
-                    exit(0)
-                elif _input == 'y' or _input == 'yes':
-                    create_dir(f'{bot.get("runtime_path") + _directory[0]}')
-                else:
-                    print(f'Not expected input. Shutting down.')
-                    exit(1)
+                create_dir(f'{bot.get("runtime_path") + _directory[0]}')
             if _directory[1] == f'create':
                 create_dir(f'{bot.get("runtime_path") + _directory[0]}')
 
