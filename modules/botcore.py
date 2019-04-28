@@ -93,16 +93,6 @@ def dict_add(dict_item: dict, key: str, value) -> dict:
     return dict_update(dict_item, key, value)
 
 
-def dict_dump_stdout(dict_item: dict):
-    """
-    Dumps the given dictionary to stdout.
-
-    :param dict_item: A dictionary to be dumped on screen.
-    """
-    for _key, _value in dict_item.items():
-        print(f'{_key} = {_value}')
-
-
 def dict_strip_quotes(dict_item: dict) -> dict:
     """
     Strips quote characters from dict values.
@@ -150,7 +140,7 @@ def dict_get_key_by_value(dict_item: dict, value) -> str or None:
     return None
 
 
-def dict_get_value_by_key(dict_item: dict, key: str) -> bool or int or float or str or list or dict or None :
+def dict_get_value_by_key(dict_item: dict, key: str) -> bool or int or float or str or list or dict or None:
     """
     Finds a value to a key if present, returns key or None otherwise.
 
@@ -258,21 +248,83 @@ def asc_to_list(filename: str) -> list:
         return list_strip_all_newline(_list_item)
 
 
-def list_to_dict(list_item, delimiter='='):
-    _output = dict()
-    for _line in list_item:
-        if not _line[0] == '#':
-            _output.update({_line.split(delimiter)[0]: _line.split(delimiter)[1]})
+def list_strip_comments(list_item: list, comment_denominator: str = '#') -> list:
+    """
+    Strips all items which are comments from a list.
+
+    :param list_item: The list object to be stripped of comments.
+    :param comment_denominator: The character with which comment lines start with.
+    :return list: A cleaned list object.
+    """
+    _output = list()
+    for _item in list_item:
+        if not _item[0] == comment_denominator:
+            _output.append(_item)
     return _output
 
 
-def dict_to_stdout(dict_item):
+def list_strip_all_blank(list_item: list) -> list:
+    """
+    Strips all items from a list which are '' or empty:
+
+    :param list_item: The list object to be stripped of all empty values.
+    :return list: A cleaned list object.
+    """
+    _output = list()
+    for _item in list_item:
+        if _item and _item != '':
+            _output.append(_item)
+    return _output
+
+
+def list_to_dict(list_item: list, delimiter: str = '=') -> dict:
+    """
+    Converts a list containing key, value pairs separated by delimiter to a dict object.
+
+    Note: Will strip all list items which are empty or blank '' or which are assumed to be comments '#'.
+
+    Example:
+        Given:
+        example_list = ['# example_comment',
+                        'example_key1=example_value1',
+                        'example_key2=example_value2',
+                        '',
+                        ]
+        Will convert to:
+        example_dict = {'example_key1': example_value,
+                        'example_key2': example_value}
+
+    :param list_item: The input list object.
+    :param delimiter: The separator to use.
+    :return dict: The new created dict object.
+    """
+    _output = dict()
+    list_item = list_strip_comments(list_item)
+    list_item = list_strip_all_blank(list_item)
+    for _line in list_item:
+        _output.update({_line.split(delimiter)[0]: _line.split(delimiter)[1]})
+    return _output
+
+
+def dict_to_stdout(dict_item: dict) -> bool:
+    """
+    Prints the dict objects contents to screen.
+
+    :param dict_item: A dict object to print out.
+    :return bool: True on finish.
+    """
     for _key, _value in dict_item.items():
         print(f'{_key}: {_value}')
     return True
 
 
-def list_to_stdout(list_item):
+def list_to_stdout(list_item: list) -> bool:
+    """
+    Prints the list objects contents to screen, each as own line.
+
+    :param list_item: A dict object to print out.
+    :return bool: True on finish.
+    """
     for _line in list_item:
         print(f'{_line}')
     return True
@@ -300,12 +352,12 @@ def list_to_file(list_item, name):
                 file.writelines(list_item)
         except PermissionError:
             print(f'Permissions missing for file: {name}')
-            end_program(_time, 1, time.time())
+            end_program(_time, 1)
         else:
             return True
     except PermissionError:
         print(f'Permissions missing for file: {name}')
-        end_program(_time, 1, time.time())
+        end_program(_time, 1)
     else:
         return True
 
