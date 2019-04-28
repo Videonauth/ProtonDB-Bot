@@ -194,12 +194,12 @@ def json_to_dict(filename: str) -> dict:
     """
     Loads a .json file and returns a dictionary on success.
 
-    :param filename: File name as a string (can include a path)
-    :return: dictionary containing the json data on success
+    :param filename: File name as a string (can include a path).
+    :return dict: containing the json data on success.
     """
     try:
         with open(filename, mode='r') as _file:
-            _data = json.load(_file)
+            _dict_item = json.load(_file)
     except FileNotFoundError as _error:
         print(f'{datetime.datetime.today()} {_error}')
         exit(1)
@@ -207,25 +207,25 @@ def json_to_dict(filename: str) -> dict:
         print(f'{datetime.datetime.today()} {_error}')
         exit(1)
     else:
-        return _data
+        return _dict_item
 
 
-def dict_to_json(data: dict, filename: str):
+def dict_to_json(dict_item: dict, filename: str) -> bool:
     """
     Saves a dictionary into a json file
 
-    :param data: Dictionary containing the data
+    :param dict_item: Dictionary containing the data
     :param filename: File name for the json file (can contain a path)
-    :return: Returns True on success
+    :return bool: Returns True on success
     """
     try:
         with open(filename, mode='x') as _file:
-            json.dump(data, _file, indent=2, sort_keys=True)
+            json.dump(dict_item, _file, indent=2, sort_keys=True)
     except FileExistsError:
         try:
             os.remove(filename)
             with open(filename, mode='w') as _file:
-                json.dump(data, _file, indent=2, sort_keys=True)
+                json.dump(dict_item, _file, indent=2, sort_keys=True)
         except PermissionError as _error:
             print(f'{datetime.datetime.today()} {_error}')
             exit(1)
@@ -238,18 +238,24 @@ def dict_to_json(data: dict, filename: str):
         return True
 
 
-def file_to_list(name):
+def asc_to_list(filename: str) -> list:
+    """
+    Loads a text file and returns a list, each line a single item stripped clean of '\n' on success.
+
+    :param filename: File name as a string (can include a path).
+    :return list: containing the text file data on success.
+    """
     try:
-        with open(name) as _infile:
-            _lines = _infile.readlines()
-    except PermissionError as error:
-        print(f'{datetime.datetime.today()} {error}')
+        with open(filename, mode='r') as _file:
+            _list_item = _file.readlines()
+    except FileNotFoundError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
         exit(1)
-    except FileNotFoundError as error:
-        print(f'{datetime.datetime.today()} {error}')
+    except PermissionError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
         exit(1)
     else:
-        return list_strip_all_newline(_lines)
+        return list_strip_all_newline(_list_item)
 
 
 def list_to_dict(list_item, delimiter='='):
@@ -277,7 +283,7 @@ def file_exists(name):
 
 
 def file_to_dict(name):
-    return list_to_dict(file_to_list(name))
+    return list_to_dict(asc_to_list(name))
 
 
 def list_to_file(list_item, name):
