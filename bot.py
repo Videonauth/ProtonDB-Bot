@@ -56,7 +56,7 @@ try:
 except ImportError:
     print(f'Could not import "time" library. Shutting down.')
     exit(1)
-finally:
+else:
     bot = dict_update(bot, 'start_time', time.time())
 
 # ---------------------------------------------------------------------------
@@ -67,7 +67,7 @@ try:
 except ImportError:
     print(f'Could not import "sys" library. Shutting down.')
     exit(1)
-finally:
+else:
     bot = dict_update(bot, f'python_platform', sys.platform)
     bot = dict_update(bot, f'python_version', str(sys.version).split(' ')[0])
     bot = dict_update(bot, f'gcc_version', str(sys.version).split('\n')[1].strip('[]GC '))
@@ -80,7 +80,7 @@ try:
 except ImportError:
     print(f'Could not import "os" library. Shutting down.')
     exit(1)
-finally:
+else:
     bot = dict_update(bot, f'runtime_path', f'{os.path.dirname(os.path.realpath(__file__))}/')
     bot = dict_update(bot, f'name_self', str(__file__).strip('.').strip('/'))
 
@@ -102,7 +102,7 @@ try:
 except ImportError:
     print(f'Could not import "logging" library. Shutting down.')
     exit(1)
-finally:
+else:
     bot = dict_update(bot, f'log_level', logging.DEBUG)
 
 try:
@@ -125,7 +125,7 @@ def create_dir(path: str, permission: oct = 0o700):
     except PermissionError:
         print(f'Lacking permission to create directories. Shutting down.')
         exit(1)
-    finally:
+    else:
         pass
 
 
@@ -210,5 +210,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(f'\nKeyboard interrupt detected. Shutting down.')
         exit(1)
-    finally:
+    else:
         exit(0)
