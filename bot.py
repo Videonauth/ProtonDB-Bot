@@ -193,7 +193,7 @@ if __name__ == '__main__' and _install:
         [f'extensions-enabled', f'create'],
     ])
     bot = dict_update(bot, f'files_expected', [
-        [f'modules/botcore.py', f'install'],
+        [f'modules/core.py', f'install'],
         [f'templates/gitignore', f'install'],
         [f'.gitignore', f'create', f'templates/gitignore'],
         [f'LICENSE', f'install'],
