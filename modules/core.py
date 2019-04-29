@@ -202,11 +202,11 @@ def json_to_dict(filename: str) -> dict:
 
 def dict_to_json(dict_item: dict, filename: str) -> bool:
     """
-    Saves a dictionary into a json file
+    Saves a dictionary into a json file.
 
-    :param dict_item: Dictionary containing the data
-    :param filename: File name for the json file (can contain a path)
-    :return bool: Returns True on success
+    :param dict_item: Dictionary containing the data.
+    :param filename: File name for the json file (can contain a path).
+    :return bool: Returns True on success.
     """
     try:
         with open(filename, mode='x') as _file:
@@ -330,55 +330,53 @@ def list_to_stdout(list_item: list) -> bool:
     return True
 
 
-def file_exists(name):
-    return os.path.exists(name)
+def asc_to_dict(filename: str) -> dict:
+    """
+    Loads an asc file into a dict object.
+
+    :param filename: The file to load.
+    :return dict: A dict object containing data.
+    """
+    return list_to_dict(asc_to_list(filename))
 
 
-def file_to_dict(name):
-    return list_to_dict(asc_to_list(name))
+def list_to_asc(list_item: list, filename: str) -> bool:
+    """
+    Saves a list into an asc file.
 
-
-def list_to_file(list_item, name):
-    _time = time.time()
+    :param list_item: List containing the data.
+    :param filename: File name for the asc file (can contain a path).
+    :return bool: Returns True on success.
+    """
     list_item = list_append_all_newline(list_item)
     try:
-        with open(name, 'x') as file:
-            file.writelines(list_item)
+        with open(filename, mode='x') as _file:
+            _file.writelines(list_item)
     except FileExistsError:
         try:
-            # os.rename(name, f'{name}.backup {datetime.datetime.today()}')
-            os.remove(name)
-            with open(name, 'w') as file:
-                file.writelines(list_item)
-        except PermissionError:
-            print(f'Permissions missing for file: {name}')
-            end_program(_time, 1)
+            os.remove(filename)
+            with open(filename, mode='w') as _file:
+                _file.writelines(list_item)
+        except PermissionError as _error:
+            print(f'{datetime.datetime.today()} {_error}')
+            exit(1)
         else:
             return True
-    except PermissionError:
-        print(f'Permissions missing for file: {name}')
-        end_program(_time, 1)
+    except PermissionError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
+        exit(1)
     else:
         return True
 
 
-def dict_to_file(dict_item, name):
-    list_to_file(dict_to_list(dict_item), name)
+def dict_to_asc(dict_item: dict, filename: str) -> bool:
+    """
 
-
-def i_am_root():
-    if os.getuid() is 0:
-        return True
-    else:
-        return False
-
-
-def who_am_i():
-    return os.getuid()
-
-
-def get_file_permissions(name):
-    return stat.filemode(os.stat(name).st_mode)
+    :param dict_item:
+    :param filename:
+    :return:
+    """
+    return list_to_asc(dict_to_list(dict_item), filename)
 
 
 def setup_logger(logger_name: str, log_file_name: str, level: int = logging.DEBUG):
