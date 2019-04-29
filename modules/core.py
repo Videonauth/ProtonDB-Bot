@@ -399,5 +399,52 @@ def setup_logger(logger_name: str, log_file_name: str, level: int = logging.DEBU
     _logger.addHandler(_stream_handler)
 
 
+def raw_to_file(filename: str, raw: str) -> bool:
+    """
+    Saves raw data to file.
+
+    :param filename: the path to be saved to.
+    :param raw: The content for the file.
+    :return bool: True on success.
+    """
+    try:
+        with open(filename, mode='x') as _file:
+            _file.write(raw)
+    except FileExistsError:
+        try:
+            os.remove(filename)
+            _file.write(raw)
+        except PermissionError as _error:
+            print(f'{datetime.datetime.today()} {_error}')
+            exit(1)
+        else:
+            return True
+    except PermissionError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
+        exit(1)
+    else:
+        return True
+
+
+def file_to_raw(filename: str) -> bool or int or float or list or dict or None:
+    """
+    Loads a file and returns its raw content.
+
+    :param filename: File name as a string (can include a path).
+    :return: containing the raw file data on success.
+    """
+    try:
+        with open(filename, mode='r') as _file:
+            _raw = _file.read()
+    except FileNotFoundError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
+        exit(1)
+    except PermissionError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
+        exit(1)
+    else:
+        return _raw
+
+
 if __name__ == '__main__':
     pass
