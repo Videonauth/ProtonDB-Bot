@@ -21,33 +21,6 @@ __github__ = f'https://raw.githubusercontent.com/Videonauth/ProtonDB-Bot/{__vers
 # ---------------------------------------------------------------------------
 bot = dict()
 
-
-# ---------------------------------------------------------------------------
-# Dictionary helper functions. Do NOT use after importing core.
-# ---------------------------------------------------------------------------
-def dict_update(dictionary_item: dict, key: str, value) -> dict:
-    """
-    Adding a key,value pair to a dictionary then return it.
-
-    :param dictionary_item:
-    :param key:
-    :param value:
-    :return dict:
-    """
-    dictionary_item.update({key: value})
-    return dictionary_item
-
-
-def dump_dict_pretty(dictionary_item: dict):
-    """
-    Dumps the given dictionary to st_out
-
-    :param dictionary_item:
-    """
-    for _key, _value in dictionary_item.items():
-        print(f'{_key} = {_value}')
-
-
 # ---------------------------------------------------------------------------
 # Importing time and fetching script start time. This has to stay on top.
 # ---------------------------------------------------------------------------
@@ -57,7 +30,48 @@ except ImportError:
     print(f'Could not import "time" library. Shutting down.')
     exit(1)
 else:
-    bot = dict_update(bot, 'start_time', time.time())
+    bot.update({'start_time': time.time()})
+
+
+# ---------------------------------------------------------------------------
+# Dictionary helper functions. Do NOT use after importing core. Theses are
+# mere copies of functions contained in core.py
+# ---------------------------------------------------------------------------
+def dict_update(dict_item: dict, key: str, value) -> dict:
+    """
+    Updating a key,value pair to a dictionary then return it. Remember keys are unique so if you not pass the exact key
+    you wil generate a new one.
+
+    :param dict_item: A dict object to be changed.
+    :param key: Key to be changed.
+    :param value: Value to be inserted into key.
+    :return dict: The changed dict object.
+    """
+    dict_item.update({key: value})
+    return dict_item
+
+
+def dict_to_stdout(dict_item: dict) -> bool:
+    """
+    Prints the dict objects contents to screen.
+
+    :param dict_item: A dict object to print out.
+    :return bool: True on finish.
+    """
+    for _key, _value in dict_item.items():
+        print(f'{_key}: {_value}')
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Importing datetime for providing in error output.
+# ---------------------------------------------------------------------------
+try:
+    import datetime
+except ImportError:
+    print(f'Could not import "datetime" library. Shutting down.')
+    exit(1)
+
 
 # ---------------------------------------------------------------------------
 # Importing sys and fetching python version and platform.
@@ -85,16 +99,6 @@ else:
     bot = dict_update(bot, f'name_self', str(__file__).strip('.').strip('/'))
 
 # ---------------------------------------------------------------------------
-#  Importing requests
-# ---------------------------------------------------------------------------
-try:
-    import requests
-except ImportError:
-    print(f'Could not import "requests" library. Shutting down.')
-    exit(1)
-
-
-# ---------------------------------------------------------------------------
 # Importing logging
 # ---------------------------------------------------------------------------
 try:
@@ -105,6 +109,9 @@ except ImportError:
 else:
     bot = dict_update(bot, f'log_level', logging.DEBUG)
 
+# ---------------------------------------------------------------------------
+# Importing shutil
+# ---------------------------------------------------------------------------
 try:
     import shutil
 except ImportError:
@@ -115,6 +122,7 @@ except ImportError:
 def create_dir(path: str, permission: oct = 0o700):
     """
     Creates a directory.
+
     :param path:
     :param permission:
     :return:
@@ -129,22 +137,41 @@ def create_dir(path: str, permission: oct = 0o700):
         pass
 
 
-def write_to_file(file: str, content: str):
+def raw_to_file(filename: str, raw: str) -> bool:
+    """
+    Saves raw data to file.
+
+    :param filename: the path to be saved to.
+    :param raw: The content for the file.
+    :return bool: True on success.
+    """
     try:
-        with open(file, mode='x') as _file:
-            _file.write(content)
+        with open(filename, mode='x') as _file:
+            _file.write(raw)
     except FileExistsError:
         try:
-            os.remove(file)
-            with open(file, mode='w') as _file:
-                _file.write(content)
-        except PermissionError:
-            print(f'Lacking permission to create files. Shutting down.')
+            os.remove(filename)
+            _file.write(raw)
+        except PermissionError as _error:
+            print(f'{datetime.datetime.today()} {_error}')
             exit(1)
-    except PermissionError:
-        print(f'Lacking permission to create files. Shutting down.')
+        else:
+            return True
+    except PermissionError as _error:
+        print(f'{datetime.datetime.today()} {_error}')
         exit(1)
+    else:
+        return True
 
+
+# ---------------------------------------------------------------------------
+#  Importing requests (dependency)
+# ---------------------------------------------------------------------------
+try:
+    import requests
+except ImportError:
+    print(f'Could not import "requests" library. Shutting down.')
+    exit(1)
 
 # ---------------------------------------------------------------------------
 # Installation procedure (only makes sense when executing bot.py not on
@@ -187,7 +214,7 @@ if __name__ == '__main__' and _install:
                 _url = __github__ + _name[0]
                 _content = requests.get(url=_url)
                 print(f'Installing "{_name[0]}" from "{_url}".')
-                write_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content.text))
+                raw_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content.text))
             if _name[1] == f'create':
                 if os.path.exists(f'{bot.get("runtime_path") + _name[2]}'):
                     print(f'Copying file "{bot.get(f"runtime_path") + _name[2]}" to ' +
@@ -199,12 +226,12 @@ if __name__ == '__main__' and _install:
                     _url = __github__ + _name[2]
                     _content = requests.get(url=_url)
                     print(f'Installing "{_name[0]}" from "{_url}".')
-                    write_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content.text))
+                    raw_to_file(f'{bot.get("runtime_path") + _name[0]}', str(_content.text))
 
 
 if __name__ == '__main__':
     try:
-        # dict_dump_stdout(bot)
+        dict_to_stdout(bot)
         while True:
             break
     except KeyboardInterrupt:
