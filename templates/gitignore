@@ -1,0 +1,27 @@
+# Project .gitignore template. We want to make sure no accidental pushes of sensitive data happens.
+# We not want a .gitignore file pushed whatever happens.
+
+.gitignore
+
+# Your IDE settings should not be in the repository either. If you want to add your one here create a
+# pull request where you have added the line to this file.
+
+.idea
+
+# config, logs and testing can contain private data and never should be pushed.
+
+config/
+logs/
+testing/
+
+# neither do we want to know what extensions you have enabled. Nor do we want to have
+# your personal created pycache.
+
+extensions-enabled/
+__pycache__/
+
+# we can exclude this as it is only a symlink to make test scripts working
+
+tests/modules
+
+# You can add your own stuff behind this line
