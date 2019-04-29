@@ -371,10 +371,11 @@ def list_to_asc(list_item: list, filename: str) -> bool:
 
 def dict_to_asc(dict_item: dict, filename: str) -> bool:
     """
+    Saves a dict into an asc file.
 
-    :param dict_item:
-    :param filename:
-    :return:
+    :param dict_item: The dict object to save.
+    :param filename: The file path to be saved to.
+    :return bool: True on success.
     """
     return list_to_asc(dict_to_list(dict_item), filename)
 
