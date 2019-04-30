@@ -104,7 +104,7 @@ try:
     import steamfront
     import bs4 as soup
 except ImportError:
-    print(f'The bot relies on some external packages to be present for running. One or more of them are missing:' +
+    print(f'The bot relies on some external packages to be present for running. One or more of them are missing:'
           f' "requests, discord, steamfront, bs4". You can install with your favorite package manager.')
     print(f'Example: "pip3 install requests discord steamfront bs4".')
 
