@@ -227,9 +227,19 @@ else:
             print(f'You can fix this by issuing "{bot.get("name_self")} install".')
             exit(1)
 
+# ---------------------------------------------------------------------------
+# Importing modules/core.py
+# ---------------------------------------------------------------------------
+try:
+    import modules.core as core
+except ImportError:
+    print(f'Something is a miss, could not import botcore. Shutting down.')
+    exit(1)
 
 if __name__ == '__main__':
     try:
+        # dump bot dict object
+        # TODO: remove before deploy
         for _key, _value in bot.items():
             print(f'{_key}: {_value}')
 
