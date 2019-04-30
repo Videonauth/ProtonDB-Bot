@@ -87,13 +87,26 @@ except ImportError:
     exit(1)
 
 # ---------------------------------------------------------------------------
+# Importing subprocess
+# ---------------------------------------------------------------------------
+try:
+    import subprocess
+except ImportError:
+    print(f'Could not import "subprocess" library. Shutting down.')
+    exit(1)
+
+# ---------------------------------------------------------------------------
 #  Importing dependencies or install them if missing.
 # ---------------------------------------------------------------------------
 try:
     import requests
+    import discord
+    import steamfront
+    import bs4 as soup
 except ImportError:
-    print(f'Could not import "requests" library. Shutting down.')
-    exit(1)
+    print(f'The bot relies on some external packages to be present for running. One or more of them are missing:' +
+          f' "requests, discord, steamfront, bs4". You can install with your favorite package manager.')
+    print(f'Example: "pip3 install requests discord steamfront bs4".')
 
 # ---------------------------------------------------------------------------
 # defining the input prompt the bot will use
