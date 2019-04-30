@@ -88,7 +88,6 @@ except ImportError:
 
 # ---------------------------------------------------------------------------
 #  Importing dependencies or install them if missing.
-# TODO: implement
 # ---------------------------------------------------------------------------
 try:
     import requests
