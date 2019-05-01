@@ -101,6 +101,7 @@ except ImportError:
 try:
     import requests
     import discord
+    from discord.ext.commands import Bot
     import steamfront
     import bs4 as soup
 except ImportError:
@@ -215,6 +216,7 @@ if sys.argv and len(sys.argv) > 1:
                                 except PermissionError:
                                     print(f'Lacking permissions to create files.')
                                     exit(1)
+        exit(0)
 else:
     for _directory in bot.get(f'directories_expected'):
         if not os.path.exists(os.path.join(bot.get(f'runtime_path'), _directory)):
@@ -228,7 +230,7 @@ else:
             exit(1)
 
 # ---------------------------------------------------------------------------
-# Importing modules/core.py
+# Importing modules/core.py.
 # ---------------------------------------------------------------------------
 try:
     import modules.core as core
@@ -236,14 +238,61 @@ except ImportError:
     print(f'Something is a miss, could not import botcore. Shutting down.')
     exit(1)
 
-if __name__ == '__main__':
-    try:
-        # dump bot dict object
-        # TODO: remove before deploy
-        for _key, _value in bot.items():
-            print(f'{_key}: {_value}')
+# ---------------------------------------------------------------------------
+# Initialize logging.
+# ---------------------------------------------------------------------------
+core.setup_logger(f'bot-log', os.path.join(bot.get('runtime_path'), f'logs/bot.log'))
+_bot_log = logging.getLogger(f'bot-log')
+_bot_log.debug(f'Bot starting up.')
 
+# ---------------------------------------------------------------------------
+# Loading permission lists or create empty files if absent.
+# ---------------------------------------------------------------------------
+if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'config/permissions.json')):
+    core.dict_update(bot,
+                     f'permissions',
+                     core.json_to_dict(os.path.join(bot.get(f'runtime_path'), f'config/permissions.json')))
+else:
+    _permissions = dict()
+    _permissions.update({
+        f'admins': [],
+        f'moderators': []
+    })
+    core.dict_to_json(_permissions, os.path.join(bot.get(f'runtime_path'), f'config/permissions.json'))
+    core.dict_update(bot, f'permissions', _permissions)
+
+# ---------------------------------------------------------------------------
+# Loading config file or create config if absent.
+# ---------------------------------------------------------------------------
+if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json')):
+    core.dict_update(bot,
+                     f'config',
+                     core.json_to_dict(os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json')))
+else:
+    _config = dict()
+    _bot_log.info(f'Please enter the bot token:')
+    _input = input(bot.get(f'prompt'))
+    core.dict_update(_config, f'bot_token', _input)
+    _bot_log.info(f'Please enter the bot owner:')
+    _input = input(bot.get(f'prompt'))
+    core.dict_update(_config, f'bot_owner', _input)
+    _bot_log.info(f'Please enter the bot prefix:')
+    _input = input(bot.get(f'prompt'))
+    core.dict_update(_config, f'bot_prefix', _input)
+    core.dict_to_json(_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
+    core.dict_update(bot, f'config', _config)
+
+# ---------------------------------------------------------------------------
+# Defining clients.
+# ---------------------------------------------------------------------------
+_bot_client = Bot(command_prefix=dict(bot.get(f'config')).get(f'bot_prefix'))
+_steam_client = steamfront.Client()  # might move into own module
+
+if __name__ == '__main__':
+    core.dict_to_stdout(bot)
+    try:
         while True:
+            _bot_client.run(dict(bot.get(f'config')).get(f'bot_token'))
             break
     except KeyboardInterrupt:
         print(f'\nKeyboard interrupt detected. Shutting down.')
