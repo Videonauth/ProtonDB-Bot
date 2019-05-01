@@ -96,12 +96,22 @@ except ImportError:
     exit(1)
 
 # ---------------------------------------------------------------------------
+# Importing suppress from contextlib
+# ---------------------------------------------------------------------------
+try:
+    from contextlib import suppress
+except ImportError:
+    print(f'Could not import "suppress" from "contextlib" library. Shutting down.')
+    exit(1)
+
+# ---------------------------------------------------------------------------
 #  Importing dependencies or install them if missing.
 # ---------------------------------------------------------------------------
 try:
     import requests
     import discord
     from discord.ext.commands import Bot
+    from discord.ext.commands import CommandNotFound
     import steamfront
     import bs4 as soup
 except ImportError:
@@ -300,10 +310,82 @@ async def on_ready():
     _bot_log.info(f'Bot name: {_bot_client.user.name}')
     _bot_log.info(f'Bot ID: {_bot_client.user.id}')
     _bot_log.info(f'Bot is ready.')
+    return
+
+
+@_bot_client.event
+async def on_command_error(context, error):
+    if isinstance(error, CommandNotFound):
+        return
+    raise error
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def load(context, extension: str = ''):
+    """
+    Loads an extension module into the chat bot
+
+    :param context: The message context.
+    :param extension: The extension name to load.
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        try:
+            _bot_client.load_extension(f'extensions-enabled.' + extension)
+            _bot_log.info(f'Loaded extension: {extension}.')
+            await context.send(f'{context.message.author.mention}\nloaded {extension}.')
+            return
+        except (AttributeError, ImportError, discord.ClientException):
+            _bot_log.warning(f'Failed to load extension: {_extension}.')
+            await context.send(f'{context.message.author.mention}\nfailed to load {extension}.')
+            return
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def unload(context, extension: str = ''):
+    """
+    Unloads an extension from the chat bot
+
+    :param context: The message context
+    :param extension: The extension name to unload.
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        try:
+            _bot_client.unload_extension(f'extensions-enabled.' + extension)
+            _bot_log.info(f'Unloaded extension: {extension}')
+            await context.send(f'{context.message.author.mention}\nunloaded {extension}')
+            return
+        except (AttributeError, ImportError, discord.ClientException):
+            _bot_log.warning(f'Failed to unload extension: {extension}')
+            await context.send(f'{context.message.author.mention}\nfailed to unload {extension}')
+            return
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def shutdown(context):
+    """
+    Shuts the bot down.
+
+    :param context:
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        await context.send(f'Goodbye cruel world.')
+        await _bot_client.logout()
+        await _bot_client.close()
+        exit(0)
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
 
 if __name__ == '__main__':
     # ---------------------------------------------------------------------------
-    # Loading extensions
+    # Loading extensions.
     # ---------------------------------------------------------------------------
     _path = os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/')
     _extension_list = [f.replace('.py', '') for f in os.listdir(_path) if os.path.isfile(os.path.join(_path, f))]
@@ -311,15 +393,15 @@ if __name__ == '__main__':
         try:
             _bot_client.load_extension('extensions-enabled.' + _extension)
             _bot_log.info(f'Loaded extension: {_extension} from {_extension}.py')
-        except (AttributeError, ImportError) as _error:
-            print(_error)
+        except (AttributeError, ImportError):
             _bot_log.warning(f'Failed to load extension: {_extension}')
 
+    # ---------------------------------------------------------------------------
+    # Run bot.
+    # ---------------------------------------------------------------------------
     try:
-        while True:
-            _bot_client.run(dict(bot.get(f'config')).get(f'bot_token'))
-            print(f'\n')
-            break
+        _bot_client.run(dict(bot.get(f'config')).get(f'bot_token'))
+        print(f'\n')
     except KeyboardInterrupt:
         print(f'\nKeyboard interrupt detected. Shutting down.')
         exit(1)
