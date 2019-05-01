@@ -13,17 +13,18 @@
 from discord.ext import commands
 
 
-class Example:
+class Example(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
+    @commands.Cog.listener()
     async def on_message_delete(self, message):
-        await self.client.send_message(message.channel, 'Message deleted.')
+        await message.channel.send(f'Message deleted.')
 
     @commands.command()
-    async def ping(self):
-        await self.client.say('Pong!')
+    async def ping(self, context):
+        await context.send(f'Pong!')
 
 
 def setup(client):
