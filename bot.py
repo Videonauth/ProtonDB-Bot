@@ -288,11 +288,37 @@ else:
 _bot_client = Bot(command_prefix=dict(bot.get(f'config')).get(f'bot_prefix'))
 _steam_client = steamfront.Client()  # might move into own module
 
+# ---------------------------------------------------------------------------
+# defining basic bot functions
+# ---------------------------------------------------------------------------
+@_bot_client.event
+async def on_ready():
+    """
+    Sends message to stdout and bot-client.log when the bot has started up
+    """
+    _bot_log.info('Logged in as:')
+    _bot_log.info(f'Bot name: {_bot_client.user.name}')
+    _bot_log.info(f'Bot ID: {_bot_client.user.id}')
+    _bot_log.info(f'Bot is ready.')
+
 if __name__ == '__main__':
-    core.dict_to_stdout(bot)
+    # ---------------------------------------------------------------------------
+    # Loading extensions
+    # ---------------------------------------------------------------------------
+    _path = os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/')
+    _extension_list = [f.replace('.py', '') for f in os.listdir(_path) if os.path.isfile(os.path.join(_path, f))]
+    for _extension in _extension_list:
+        try:
+            _bot_client.load_extension('extensions-enabled.' + _extension)
+            _bot_log.info(f'Loaded extension: {_extension} from {_extension}.py')
+        except (AttributeError, ImportError) as _error:
+            print(_error)
+            _bot_log.warning(f'Failed to load extension: {_extension}')
+
     try:
         while True:
             _bot_client.run(dict(bot.get(f'config')).get(f'bot_token'))
+            print(f'\n')
             break
     except KeyboardInterrupt:
         print(f'\nKeyboard interrupt detected. Shutting down.')
