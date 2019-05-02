@@ -413,7 +413,10 @@ async def modules(context, parameter: str):
         if parameter == f'available':
             _path_available = os.path.join(bot.get(f'runtime_path'), f'extensions-available/')
             _list_available = [
-                f.replace('.py', '') for f in os.listdir(_path_available) if os.path.isfile(os.path.join(_path_available, f))
+                f.replace('.py', '') for f in os.listdir(_path_available) if os.path.isfile(os.path.join(
+                    _path_available,
+                    f
+                ))
             ]
             for _module in _list_available:
                 _output += f'{_module}\n'
@@ -425,7 +428,10 @@ async def modules(context, parameter: str):
         elif parameter == f'enabled':
             _path_enabled = os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/')
             _list_enabled = [
-                f.replace('.py', '') for f in os.listdir(_path_enabled) if os.path.isfile(os.path.join(_path_enabled, f))
+                f.replace('.py', '') for f in os.listdir(_path_enabled) if os.path.isfile(os.path.join(
+                    _path_enabled,
+                    f
+                ))
             ]
             for _module in _list_enabled:
                 _output += f'{_module}\n'
