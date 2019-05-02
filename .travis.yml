@@ -10,4 +10,4 @@ install:
   - pip3 install -r requirements.txt --upgrade
 
 script:
-  - flake8 --config=tox.ini ./
+  - flake8 --config=flake_test.ini ./
