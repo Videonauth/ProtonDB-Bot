@@ -315,15 +315,26 @@ async def on_ready():
 
 @_bot_client.event
 async def on_command_error(context, error):
-    if isinstance(error, CommandNotFound):
+    """
+    Avoids discord.py to throw an error on a wrong command.
+
+    :param context: The message context.
+    :param error: The error message.
+    :raises: error if the error is not CommandNotFound
+    """
+    if isinstance(error, CommandNotFound) and context:
         return
     raise error
 
-
+# ---------------------------------------------------------------------------
+# defining basic bot owner commands
+# ---------------------------------------------------------------------------
 @_bot_client.command(pass_context=True, hidden=True)
 async def load(context, extension: str = ''):
     """
     Loads an extension module into the chat bot
+
+    Usage: [prefix]load <extension>
 
     :param context: The message context.
     :param extension: The extension name to load.
@@ -348,6 +359,8 @@ async def unload(context, extension: str = ''):
     """
     Unloads an extension from the chat bot
 
+    Usage: [prefix]unload <extension>
+
     :param context: The message context
     :param extension: The extension name to unload.
     """
@@ -371,13 +384,131 @@ async def shutdown(context):
     """
     Shuts the bot down.
 
-    :param context:
+    Usage: [prefix]shutdown
+
+    :param context: The message context
     """
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
-        await context.send(f'Goodbye cruel world.')
+        await context.send(f'{context.message.author.mention}\nGoodbye cruel world.')
         await _bot_client.logout()
         await _bot_client.close()
         exit(0)
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def modules(context, parameter: str):
+    """
+    Lists the extension available or enabled.
+
+    Usage: [prefix]modules <(available|enabled)>
+
+    :param context: The message context
+    :param parameter: A string containing either available or enabled
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        _output = f''
+        if parameter == f'available':
+            _path_available = os.path.join(bot.get(f'runtime_path'), f'extensions-available/')
+            _list_available = [
+                f.replace('.py', '') for f in os.listdir(_path_available) if os.path.isfile(os.path.join(_path_available, f))
+            ]
+            for _module in _list_available:
+                _output += f'{_module}\n'
+            if _output:
+                await context.send(f'{context.message.author.mention}\nThe following modules are available:\n{_output}')
+            else:
+                await context.send(f'{context.message.author.mention}\nThe are no modules available.')
+            return
+        elif parameter == f'enabled':
+            _path_enabled = os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/')
+            _list_enabled = [
+                f.replace('.py', '') for f in os.listdir(_path_enabled) if os.path.isfile(os.path.join(_path_enabled, f))
+            ]
+            for _module in _list_enabled:
+                _output += f'{_module}\n'
+            if _output:
+                await context.send(f'{context.message.author.mention}\nThe following modules are enabled:\n{_output}')
+            else:
+                await context.send(f'{context.message.author.mention}\nThe are no modules enabled.')
+        else:
+            return
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def enable(context, parameter):
+    """
+    Enables an extension if it is present in 'extensions-available'.
+
+    Usage:[prefix]enable <extension>
+
+    :param context: The message context.
+    :param parameter: The extension name to enable
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-available/{parameter}.py')):
+            try:
+                core.bash_command([
+                    f'ln',
+                    f'-s',
+                    os.path.join(bot.get(f'runtime_path'), f'extensions-available/{parameter}.py'),
+                    os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{parameter}.py')
+                ])
+            except PermissionError:
+                await context.send(f'{context.message.author.mention}\nThe bot is lacking permissions'
+                                   f'to create symlinks.')
+                return
+            else:
+                try:
+                    _bot_client.load_extension(f'extensions-enabled.{parameter}')
+                except (AttributeError, ImportError):
+                    _bot_log.warning(f'Failed to load extension: {_extension}')
+                else:
+                    await context.send(f'{context.message.author.mention}\nenabled {parameter}')
+                finally:
+                    return
+        else:
+            await context.send(f'{context.message.author.mention}\n This is not a known extension.')
+            return
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def disable(context, parameter):
+    """
+    Disables an extension if it is present in 'extensions-available'.
+
+    Usage:[prefix]disable <extension>
+
+    :param context: The message context.
+    :param parameter: The extension name to disable
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{parameter}.py')):
+            try:
+                os.remove(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{parameter}.py'))
+            except PermissionError:
+                await context.send(f'{context.message.author.mention}\nThe bot is lacking permissions'
+                                   f'to remove symlinks.')
+                return
+            else:
+                try:
+                    _bot_client.unload_extension(f'extensions-enabled.{parameter}')
+                except (AttributeError, ImportError):
+                    _bot_log.warning(f'Failed to load extension: {_extension}')
+                else:
+                    await context.send(f'{context.message.author.mention}\ndisabled {parameter}')
+                finally:
+                    return
+        else:
+            await context.send(f'{context.message.author.mention}\n{parameter} is not enabled. Nothing to disable.')
     else:
         await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
         return
