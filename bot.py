@@ -289,6 +289,7 @@ else:
     _bot_log.info(f'Please enter the bot prefix:')
     _input = input(bot.get(f'prompt'))
     core.dict_update(_config, f'bot_prefix', _input)
+    core.dict_update(_config, f'muted_channels', [])
     core.dict_to_json(_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
     core.dict_update(bot, f'config', _config)
 
@@ -399,18 +400,18 @@ async def shutdown(context):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
-async def modules(context, parameter: str):
+async def modules(context, extension: str):
     """
     Lists the extension available or enabled.
 
     Usage: [prefix]modules <(available|enabled)>
 
     :param context: The message context
-    :param parameter: A string containing either available or enabled
+    :param extension: A string containing either available or enabled
     """
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         _output = f''
-        if parameter == f'available':
+        if extension == f'available':
             _path_available = os.path.join(bot.get(f'runtime_path'), f'extensions-available/')
             _list_available = [
                 f.replace('.py', '') for f in os.listdir(_path_available) if os.path.isfile(os.path.join(
@@ -425,7 +426,7 @@ async def modules(context, parameter: str):
             else:
                 await context.send(f'{context.message.author.mention}\nThe are no modules available.')
             return
-        elif parameter == f'enabled':
+        elif extension == f'enabled':
             _path_enabled = os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/')
             _list_enabled = [
                 f.replace('.py', '') for f in os.listdir(_path_enabled) if os.path.isfile(os.path.join(
@@ -447,23 +448,23 @@ async def modules(context, parameter: str):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
-async def enable(context, parameter):
+async def enable(context, extension: str):
     """
     Enables an extension if it is present in 'extensions-available'.
 
-    Usage:[prefix]enable <extension>
+    Usage: [prefix]enable <extension>
 
     :param context: The message context.
-    :param parameter: The extension name to enable
+    :param extension: The extension name to enable
     """
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
-        if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-available/{parameter}.py')):
+        if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-available/{extension}.py')):
             try:
                 core.bash_command([
                     f'ln',
                     f'-s',
-                    os.path.join(bot.get(f'runtime_path'), f'extensions-available/{parameter}.py'),
-                    os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{parameter}.py')
+                    os.path.join(bot.get(f'runtime_path'), f'extensions-available/{extension}.py'),
+                    os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py')
                 ])
             except PermissionError:
                 await context.send(f'{context.message.author.mention}\nThe bot is lacking permissions'
@@ -471,11 +472,11 @@ async def enable(context, parameter):
                 return
             else:
                 try:
-                    _bot_client.load_extension(f'extensions-enabled.{parameter}')
+                    _bot_client.load_extension(f'extensions-enabled.{extension}')
                 except (AttributeError, ImportError):
                     _bot_log.warning(f'Failed to load extension: {_extension}')
                 else:
-                    await context.send(f'{context.message.author.mention}\nenabled {parameter}')
+                    await context.send(f'{context.message.author.mention}\nenabled {extension}')
                 finally:
                     return
         else:
@@ -487,34 +488,97 @@ async def enable(context, parameter):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
-async def disable(context, parameter):
+async def disable(context, extension: str):
     """
     Disables an extension if it is present in 'extensions-available'.
 
-    Usage:[prefix]disable <extension>
+    Usage: [prefix]disable <extension>
 
     :param context: The message context.
-    :param parameter: The extension name to disable
+    :param extension: The extension name to disable
     """
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
-        if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{parameter}.py')):
+        if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py')):
             try:
-                os.remove(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{parameter}.py'))
+                os.remove(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py'))
             except PermissionError:
                 await context.send(f'{context.message.author.mention}\nThe bot is lacking permissions'
                                    f'to remove symlinks.')
                 return
             else:
                 try:
-                    _bot_client.unload_extension(f'extensions-enabled.{parameter}')
+                    _bot_client.unload_extension(f'extensions-enabled.{extension}')
                 except (AttributeError, ImportError):
                     _bot_log.warning(f'Failed to load extension: {_extension}')
                 else:
-                    await context.send(f'{context.message.author.mention}\ndisabled {parameter}')
+                    await context.send(f'{context.message.author.mention}\ndisabled {extension}')
                 finally:
                     return
         else:
-            await context.send(f'{context.message.author.mention}\n{parameter} is not enabled. Nothing to disable.')
+            await context.send(f'{context.message.author.mention}\n{extension} is not enabled. Nothing to disable.')
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def mute(context, channel: str):
+    """
+    Adds a channel on the list of muted channels.
+
+    Usage: [prefix]mute <channel>
+
+    :param context: The message context.
+    :param channel: The channel to mute without the leading #
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        if channel not in dict(bot.get(f'config')).get(f'muted_channels'):
+            _channels = list()
+            for _channel in _bot_client.get_all_channels():
+                _channels.append(str(_channel))
+            if channel in _channels:
+                _temp_config = dict(bot.get(f'config'))
+                _muted_channels = list(_temp_config.get(f'muted_channels'))
+                _muted_channels.append(channel)
+                core.dict_update(_temp_config, f'muted_channels', _muted_channels)
+                core.dict_update(bot, f'config', _temp_config)
+                core.dict_to_json(_temp_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
+                await context.send(f'{context.message.author.mention}\nmuted {channel}.')
+                return
+            else:
+                await context.send(f'{context.message.author.mention}\n{channel} is not a valid channel.')
+                return
+        else:
+            await context.send(f'{context.message.author.mention}\n{channel} is already muted. Doing nothing.')
+            return
+    else:
+        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
+async def unmute(context, channel):
+    """
+    Removes a channel from the list of muted channels.
+
+    Usage: [prefix]unmute <channel>
+
+    :param context: The message context.
+    :param channel: The channel to unmute without the leading #
+    """
+    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        _temp_config = dict(bot.get(f'config'))
+        _muted_channels = list(_temp_config.get(f'muted_channels'))
+        if channel in _muted_channels:
+            _muted_channels.remove(channel)
+            core.dict_update(_temp_config, f'muted_channels', _muted_channels)
+            core.dict_update(bot, f'config', _temp_config)
+            core.dict_to_json(_temp_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
+            await context.send(f'{context.message.author.mention}\nunmuted {channel}.')
+            return
+        else:
+            await context.send(f'{context.message.author.mention}\n{channel} is not muted. Doing nothing.')
+            return
     else:
         await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
         return
