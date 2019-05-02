@@ -27,6 +27,7 @@ bot = dict()
 try:
     import time
 except ImportError:
+    time = None
     print(f'Could not import "time" library. Shutting down.')
     exit(1)
 else:
@@ -38,6 +39,7 @@ else:
 try:
     import datetime
 except ImportError:
+    datetime = None
     print(f'Could not import "datetime" library. Shutting down.')
     exit(1)
 
@@ -47,6 +49,7 @@ except ImportError:
 try:
     import sys
 except ImportError:
+    sys = None
     print(f'Could not import "sys" library. Shutting down.')
     exit(1)
 else:
@@ -60,6 +63,7 @@ else:
 try:
     import os
 except ImportError:
+    os = None
     print(f'Could not import "os" library. Shutting down.')
     exit(1)
 else:
@@ -72,6 +76,7 @@ else:
 try:
     import logging
 except ImportError:
+    logging = None
     print(f'Could not import "logging" library. Shutting down.')
     exit(1)
 else:
@@ -83,6 +88,7 @@ else:
 try:
     import shutil
 except ImportError:
+    shutil = None
     print(f'Could not import "shutil" library. Shutting down.')
     exit(1)
 
@@ -92,16 +98,8 @@ except ImportError:
 try:
     import subprocess
 except ImportError:
+    subprocess = None
     print(f'Could not import "subprocess" library. Shutting down.')
-    exit(1)
-
-# ---------------------------------------------------------------------------
-# Importing suppress from contextlib
-# ---------------------------------------------------------------------------
-try:
-    from contextlib import suppress
-except ImportError:
-    print(f'Could not import "suppress" from "contextlib" library. Shutting down.')
     exit(1)
 
 # ---------------------------------------------------------------------------
@@ -112,12 +110,15 @@ try:
     import discord
     from discord.ext.commands import Bot
     from discord.ext.commands import CommandNotFound
-    import steamfront
-    import bs4 as soup
 except ImportError:
+    requests = None
+    discord = None
+    Bot = None
+    CommandNotFound = None
     print(f'The bot relies on some external packages to be present for running. One or more of them are missing:'
           f' "requests, discord, steamfront, bs4". You can install with your favorite package manager.')
     print(f'Example: "pip3 install requests discord steamfront bs4".')
+    exit(0)
 
 # ---------------------------------------------------------------------------
 # defining the input prompt the bot will use
@@ -245,7 +246,8 @@ else:
 try:
     import modules.core as core
 except ImportError:
-    print(f'Something is a miss, could not import botcore. Shutting down.')
+    core = None
+    print(f'Something is amiss, could not import botcore. Shutting down.')
     exit(1)
 
 # ---------------------------------------------------------------------------
@@ -297,7 +299,6 @@ else:
 # Defining clients.
 # ---------------------------------------------------------------------------
 _bot_client = Bot(command_prefix=dict(bot.get(f'config')).get(f'bot_prefix'))
-_steam_client = steamfront.Client()  # might move into own module
 
 # ---------------------------------------------------------------------------
 # defining basic bot functions
@@ -305,7 +306,7 @@ _steam_client = steamfront.Client()  # might move into own module
 @_bot_client.event
 async def on_ready():
     """
-    Sends message to stdout and bot-client.log when the bot has started up
+    Sends message to stdout and bot.log when the bot has started up
     """
     _bot_log.info('Logged in as:')
     _bot_log.info(f'Bot name: {_bot_client.user.name}')
@@ -344,14 +345,14 @@ async def load(context, extension: str = ''):
         try:
             _bot_client.load_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Loaded extension: {extension}.')
-            await context.send(f'{context.message.author.mention}\nloaded {extension}.')
+            await context.send(f'{context.message.author.mention}\nLoaded {extension}.')
             return
         except (AttributeError, ImportError, discord.ClientException):
             _bot_log.warning(f'Failed to load extension: {_extension}.')
-            await context.send(f'{context.message.author.mention}\nfailed to load {extension}.')
+            await context.send(f'{context.message.author.mention}\nFailed to load {extension}.')
             return
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -369,14 +370,14 @@ async def unload(context, extension: str = ''):
         try:
             _bot_client.unload_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Unloaded extension: {extension}')
-            await context.send(f'{context.message.author.mention}\nunloaded {extension}')
+            await context.send(f'{context.message.author.mention}\nUnloaded {extension}.')
             return
         except (AttributeError, ImportError, discord.ClientException):
             _bot_log.warning(f'Failed to unload extension: {extension}')
-            await context.send(f'{context.message.author.mention}\nfailed to unload {extension}')
+            await context.send(f'{context.message.author.mention}\nFailed to unload {extension}.')
             return
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -395,7 +396,7 @@ async def shutdown(context):
         await _bot_client.close()
         exit(0)
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -443,7 +444,7 @@ async def modules(context, extension: str):
         else:
             return
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -476,14 +477,14 @@ async def enable(context, extension: str):
                 except (AttributeError, ImportError):
                     _bot_log.warning(f'Failed to load extension: {_extension}')
                 else:
-                    await context.send(f'{context.message.author.mention}\nenabled {extension}')
+                    await context.send(f'{context.message.author.mention}\nEnabled {extension}')
                 finally:
                     return
         else:
-            await context.send(f'{context.message.author.mention}\n This is not a known extension.')
+            await context.send(f'{context.message.author.mention}\nThis is not a known extension.')
             return
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -511,13 +512,13 @@ async def disable(context, extension: str):
                 except (AttributeError, ImportError):
                     _bot_log.warning(f'Failed to load extension: {_extension}')
                 else:
-                    await context.send(f'{context.message.author.mention}\ndisabled {extension}')
+                    await context.send(f'{context.message.author.mention}\nDisabled {extension}')
                 finally:
                     return
         else:
-            await context.send(f'{context.message.author.mention}\n{extension} is not enabled. Nothing to disable.')
+            await context.send(f'{context.message.author.mention}\nThe {extension} is not enabled. Nothing to disable.')
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -543,7 +544,7 @@ async def mute(context, channel: str):
                 core.dict_update(_temp_config, f'muted_channels', _muted_channels)
                 core.dict_update(bot, f'config', _temp_config)
                 core.dict_to_json(_temp_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
-                await context.send(f'{context.message.author.mention}\nmuted {channel}.')
+                await context.send(f'{context.message.author.mention}\nMuted {channel}.')
                 return
             else:
                 await context.send(f'{context.message.author.mention}\n{channel} is not a valid channel.')
@@ -552,7 +553,7 @@ async def mute(context, channel: str):
             await context.send(f'{context.message.author.mention}\n{channel} is already muted. Doing nothing.')
             return
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
@@ -574,13 +575,13 @@ async def unmute(context, channel):
             core.dict_update(_temp_config, f'muted_channels', _muted_channels)
             core.dict_update(bot, f'config', _temp_config)
             core.dict_to_json(_temp_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
-            await context.send(f'{context.message.author.mention}\nunmuted {channel}.')
+            await context.send(f'{context.message.author.mention}\nUnmuted {channel}.')
             return
         else:
             await context.send(f'{context.message.author.mention}\n{channel} is not muted. Doing nothing.')
             return
     else:
-        await context.send(f'{context.message.author.mention}\nyou are not the bot owner, ignoring command.')
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
         return
 
 
