@@ -446,5 +446,33 @@ def file_to_raw(filename: str) -> bool or int or float or list or dict or None:
         return _raw
 
 
+def dir_create(path: str) -> bool:
+    """
+    Creates a directory or if path to directory does not exist create the whole path.
+
+    Note: Equivalent of 'mkdir -p <path>'. Bails out on permission error.
+
+    :param path: The path/directory to create as string.
+    :return bool: Returns True on success and False if the directory exists already.
+    """
+    try:
+        os.mkdir(path)
+    except FileNotFoundError:
+        try:
+            os.makedirs(path)
+        except PermissionError:
+            print(f'Lacking permissions to create directories.')
+            exit(1)
+        else:
+            return True
+    except FileExistsError:
+        return False
+    except PermissionError:
+        print(f'Lacking permissions to create directories.')
+        exit(1)
+    else:
+        return True
+
+
 if __name__ == '__main__':
     pass

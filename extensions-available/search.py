@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # ---------------------------------------------------------------------------
-# ProtonDB-Bot - extensions-available/example.py
+# ProtonDB-Bot - extensions-available/search.py
 # ---------------------------------------------------------------------------
 # Author: Videonauth <videonauth@googlemail.com>
 # License: MIT (see LICENSE file)
@@ -13,19 +13,24 @@
 from discord.ext import commands
 
 
-class Example(commands.Cog):
+class Search(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_message_delete(self, message):
-        await message.channel.send(f'Message deleted.')
+    # TODO: remove this block
+    # @commands.Cog.listener()
+    # async def on_message_delete(self, message):
+    #     await message.channel.send(f'Message deleted.')
+    #
+    # @commands.command()
+    # async def ping(self, context):
+    #     await context.send(f'Pong!')
 
     @commands.command()
-    async def ping(self, context):
-        await context.send(f'Pong!')
+    async def search(self, context):
+        await context.send(f'searching')
 
 
 def setup(client):
-    client.add_cog(Example(client))
+    client.add_cog(Search(client))
