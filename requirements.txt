@@ -11,6 +11,7 @@ entrypoints>=0.3
 flake8>=3.7.7
 flake8-polyfill>=1.0.2
 idna>=2.8
+lxml>=4.3.3
 mccabe>=0.6.1
 multidict>=4.5.2
 pep8-naming>=0.8.2
