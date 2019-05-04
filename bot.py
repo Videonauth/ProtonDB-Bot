@@ -255,7 +255,6 @@ except ImportError:
 # ---------------------------------------------------------------------------
 core.setup_logger(f'bot-log', os.path.join(bot.get('runtime_path'), f'logs/bot.log'))
 _bot_log = logging.getLogger(f'bot-log')
-_bot_log.debug(f'Bot starting up.')
 
 # ---------------------------------------------------------------------------
 # Loading permission lists or create empty files if absent.
