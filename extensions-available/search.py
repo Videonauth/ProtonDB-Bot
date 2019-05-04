@@ -43,7 +43,7 @@ import modules.core as core
 # ---------------------------------------------------------------------------
 # Initialize logging
 # ---------------------------------------------------------------------------
-core.setup_logger(f'searcg-log', f'logs/search.log')
+core.setup_logger(f'search-log', f'logs/search.log')
 _search_log = logging.getLogger(f'search-log')
 _search_log.debug(f'Bot starting up.')
 
