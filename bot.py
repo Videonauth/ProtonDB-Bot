@@ -381,6 +381,33 @@ async def unload(context, extension: str = ''):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
+async def reload(context, extension: str):
+    """
+    Reloads an extension module.
+
+    Usage: [prefix]reload <extension>
+
+    :param context: The message context.
+    :param extension: The extension to reload.
+    """
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        try:
+            _bot_client.unload_extension(f'extensions-enabled.' + extension)
+            _bot_log.info(f'Unloaded extension: {extension}')
+            _bot_client.load_extension(f'extensions-enabled.' + extension)
+            _bot_log.info(f'Loaded extension: {extension}')
+            await context.send(f'{context.message.author.mention}\nReloaded {extension}.')
+            return
+        except (AttributeError, ImportError, discord.ClientException):
+            _bot_log.warning(f'Failed to unload extension: {extension}')
+            await context.send(f'{context.message.author.mention}\nFailed to reload {extension}.')
+            return
+    else:
+        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
 async def shutdown(context):
     """
     Shuts the bot down.

@@ -80,9 +80,11 @@ class Search(commands.Cog):
             await context.send(f'{context.message.author.mention}\nThe bot is muted in this channel.')
             return
 
-        _output = f'{context.message.author.mention}\n'
+        # _output = f'{context.message.author.mention}\n'
+        _output = f''
         _data = None
         _game = None
+        _embed = f''
         if search_text is not f'':
 
             # Assume search_string is a number and try a steamfront search for AppId
@@ -147,11 +149,22 @@ class Search(commands.Cog):
                 _output += f'\n'
                 _output += f'[Search with Google.]({__google__ + search_text.replace(" ", "+")})\n\n'
                 _output += f'[Search with Duck Duck Go.]({__duck__ + search_text.replace(" ", "*")})\n'
+                _embed = discord.Embed(
+                    title=f'Search failure:',
+                    description=_output,
+                    colour=discord.Colour.orange()
+                )
 
         # if we got no search string
         else:
             _output += f'If you want me to search something for you you need to specify it.\n'
+            _embed = discord.Embed(
+                title=f'Error:',
+                description=_output,
+                colour=discord.Colour.red()
+            )
 
+        # TODO: cleanup
         # if we got a _game object we compose the output data
         if _game is not None:
             # Hitting protondb only then we have some of the data already.
@@ -166,46 +179,75 @@ class Search(commands.Cog):
                     pass
             else:
                 _data = None
-            _output += f'I found the following for "{search_text}":\n\n'
-            _output += f'Game Name: {_game.name}\n'
-            _output += f'Game appID: {_game.appid}\n\n'
-            _output += f'[ProtonDB link](https://www.protondb.com/app/{_game.appid})\n'
+            _ratings_value = str()
+            _ratings_value += f'[ProtonDB link](https://www.protondb.com/app/{_game.appid})\n'
             if _data is None:
                 if dict(_game.platforms).get('linux') is True:
-                    _output += f'```Runs Native```\n'
+                    _ratings_value += f'```Runs Native```\n'
                 elif dict(_game.platforms).get('linux') is False:
-                    _output += f'```It seems there are no reports yet. You can add one```'
-                    _output += f'[Write a report.](<https://www.protondb.com/contribute?appId={_game.appid}>)\n\n'
+                    _ratings_value += f'```It seems there are no reports yet. You can add one```'
+                    _ratings_value += \
+                        f'[Write a report.](<https://www.protondb.com/contribute?appId={_game.appid}>)\n\n'
             else:
                 if dict(_game.platforms).get('linux') is True:
-                    _output += f'```Runs Native\n\n'
+                    _ratings_value += f'```Runs Native\n\n'
                 else:
-                    _output += f'```'
-                _output += f'Current rating:    {_data.get("tier")}\n'
-                _output += f'Number of reports: {_data.get("total")}\n'
-                _output += f'Trending:          {_data.get("trendingTier")}\n'
-                _output += f'Best rating given: {_data.get("bestReportedTier")}```'
+                    _ratings_value += f'```'
+                _ratings_value += f'Current rating:    {_data.get("tier")}\n'
+                _ratings_value += f'Number of reports: {_data.get("total")}\n'
+                _ratings_value += f'Trending:          {_data.get("trendingTier")}\n'
+                _ratings_value += f'Best rating given: {_data.get("bestReportedTier")}```'
                 if dict(_game.platforms).get('linux') is True:
-                    _output += f'\n'
+                    _ratings_value += f'\n'
                 else:
-                    _output += f'[Write a report.](<https://www.protondb.com/contribute?appId={_game.appid}>)\n\n'
-            _output += f'[Steam link](<https://store.steampowered.com/app/{_game.appid}>)\n'
-            _output += f'[SteamDB link](<https://steamdb.info/app/{_game.appid}>)\n'
+                    _ratings_value += \
+                        f'[Write a report.](<https://www.protondb.com/contribute?appId={_game.appid}>)\n\n'
+            _steamlink = str()
+            _steamlink += f'[Steam link](<https://store.steampowered.com/app/{_game.appid}>)\n'
+            _steamdblink = str()
+            _steamdblink += f'[SteamDB link](<https://steamdb.info/app/{_game.appid}>)\n'
+            _metacritic = str()
             try:
-                _output += f'[Metacritic link](<{dict(_game.metacritic).get("url")}>)\n'
-                _output += f'```Metacritic: {dict(_game.metacritic).get("score")}/100\n'
+                _metacritic += f'[{dict(_game.metacritic).get("score")}/100](<{dict(_game.metacritic).get("url")}>)\n'
             except TypeError:
-                _output += f'```Metacritic: N/A\n'
+                _metacritic += f'N/A\n'
+            _price = str()
             try:
-                _output += f'Price:      {dict(_game.price_overview).get("final_formatted")}```\n'
+                _price += \
+                    f'[{dict(_game.price_overview).get("final_formatted")}](<https://store.' \
+                    f'steampowered.com/app/{_game.appid}>)\n'
             except TypeError:
-                _output += f'Price:      N/A```\n'
-        _embed = discord.Embed(
-            # title=f'test',
-            description=_output,
-            colour=discord.Colour.orange()
-        )
-        _embed.set_image(url=f'https://steamcdn-a.akamaihd.net/steam/apps/{_game.appid}/header.jpg')
+                _price += f'N/A\n\n'
+            try:
+                _about = str(_game.about_the_game)
+            except TypeError:
+                _about = None
+            if _about is not None:
+                # sanitize input
+                _about = _about.replace(f'<br>', f'\n')
+                _about = _about.replace(f'<strong>', f'**')
+                _about = _about.replace(f'</strong>', f'**')
+                _about = _about.replace(f'<img src="', f'[Image](')
+                _about = _about.replace(f'">', f')')
+                _about = _about.replace(f'" >', f')')
+            _embed = discord.Embed(
+                # title=f'Search result:',
+                # description=f'I found the following for "{search_text}".\n\n',
+                colour=discord.Colour.from_rgb(0xff, 0xff, 0xff)
+            )
+            _embed.add_field(name=f'Game Name', value=_game.name, inline=False)
+            _embed.add_field(name=f'Game appID', value=_game.appid, inline=False)
+            _embed.add_field(name=f'ProtonDB ratings', value=_ratings_value, inline=False)
+            _embed.add_field(name=f'Steam', value=_steamlink, inline=True)
+            _embed.add_field(name=f'SteamDB', value=_steamdblink, inline=True)
+            _embed.add_field(name=f'Metacritic score', value=_metacritic, inline=True)
+            _embed.add_field(name=f'Price', value=_price, inline=True)
+            _embed.add_field(
+                name=f'About',
+                value=_about[0: 300-9] + f'\n[Read more](https://store.steampowered.com/app/{_game.appid})',  # m 1024
+                inline=False
+            )
+            _embed.set_image(url=f'https://steamcdn-a.akamaihd.net/steam/apps/{_game.appid}/header.jpg')
         # _embed.set_thumbnail(url=f'https://steamcdn-a.akamaihd.net/steam/apps/{_game.appid}/header.jpg')
         await context.send(embed=_embed)
 
