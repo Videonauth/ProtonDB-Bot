@@ -244,7 +244,7 @@ class Search(commands.Cog):
             _embed.add_field(name=f'Price', value=_price, inline=True)
             _embed.add_field(
                 name=f'About',
-                value=_about[0: 300-9] + f'\n[Read more](https://store.steampowered.com/app/{_game.appid})',  # m 1024
+                value=_about[0: 300 - 9] + f'\n[Read more](https://store.steampowered.com/app/{_game.appid})',  # m 1024
                 inline=False
             )
             _embed.set_image(url=f'https://steamcdn-a.akamaihd.net/steam/apps/{_game.appid}/header.jpg')
