@@ -102,9 +102,17 @@ class Search(commands.Cog):
                     _game = None
 
             # Try a google search for 'site:steamdb.info+search_text' divided by '/app/'
+            # "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0"
             if _game is None:
                 _url = f'{__google__}site%3Asteamdb.info+{search_text.replace(" ", "+")}'
-                _soup = Soup(requests.get(url=_url).text, f'lxml')
+                _soup = Soup(
+                    requests.get(
+                        url=_url,
+                        headers={f'User-Agent': f'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;'
+                                 f' rv:66.0) Gecko/20100101 Firefox/66.0',
+                                 f'Referer': '-'}
+                    ).text, f'lxml'
+                )
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'/app/')) != -1:
@@ -118,7 +126,14 @@ class Search(commands.Cog):
             # Try a google search for 'site:steamdb.info+search_text' divided by 'sub'
             if _game is None:
                 _url = f'{__google__}site%3Asteamdb.info+{search_text.replace(" ", "+")}'
-                _soup = Soup(requests.get(url=_url).text, f'lxml')
+                _soup = Soup(
+                    requests.get(
+                        url=_url,
+                        headers={f'User-Agent': f'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;'
+                                 f' rv:66.0) Gecko/20100101 Firefox/66.0',
+                                 f'Referer': '-'}
+                    ).text, f'lxml'
+                )
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'sub')) != -1:
@@ -132,7 +147,14 @@ class Search(commands.Cog):
             # Try a google search for 'site:store.steampowered.com+search_text divided by 'AppId'
             if _game is None:
                 _url = f'{__google__}site%3Astore.steampowered.com+{search_text.replace(" ", "+")}'
-                _soup = Soup(requests.get(url=_url).text, f'lxml')
+                _soup = Soup(
+                    requests.get(
+                        url=_url,
+                        headers={f'User-Agent': f'Mozilla/5.0 (X11; Ubuntu; Linux x86_64;'
+                                 f' rv:66.0) Gecko/20100101 Firefox/66.0',
+                                 f'Referer': '-'}
+                    ).text, f'lxml'
+                )
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'AppId')) != -1:
