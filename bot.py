@@ -706,16 +706,40 @@ async def mute(context, channel: str):
                 core.dict_update(_temp_config, f'muted_channels', _muted_channels)
                 core.dict_update(bot, f'config', _temp_config)
                 core.dict_to_json(_temp_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
-                await context.send(f'{context.message.author.mention}\nMuted {channel}.')
+                _bot_log.info(f'Muted {channel}.')
+                _embed = discord.Embed(
+                    title=f'Success:',
+                    description=f'Muted {channel}.',
+                    colour=discord.Colour.green()
+                )
+                await context.send(embed=_embed)
                 return
             else:
-                await context.send(f'{context.message.author.mention}\n{channel} is not a valid channel.')
+                _bot_log.warning(f'{channel} is not a valid channel.')
+                _embed = discord.Embed(
+                    title=f'Failure:',
+                    description=f'{channel} is not a valid channel.',
+                    colour=discord.Colour.red()
+                )
+                await context.send(embed=_embed)
                 return
         else:
-            await context.send(f'{context.message.author.mention}\n{channel} is already muted. Doing nothing.')
+            _bot_log.warning(f'{channel} is already muted. Doing nothing.')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'{channel} is already muted. Doing nothing.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to mute {channel} channel, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -737,13 +761,31 @@ async def unmute(context, channel):
             core.dict_update(_temp_config, f'muted_channels', _muted_channels)
             core.dict_update(bot, f'config', _temp_config)
             core.dict_to_json(_temp_config, os.path.join(bot.get(f'runtime_path'), f'config/bot-config.json'))
-            await context.send(f'{context.message.author.mention}\nUnmuted {channel}.')
+            _bot_log.info(f'Unmuted {channel}.')
+            _embed = discord.Embed(
+                title=f'Success:',
+                description=f'Unmuted {channel}.',
+                colour=discord.Colour.green()
+            )
+            await context.send(embed=_embed)
             return
         else:
-            await context.send(f'{context.message.author.mention}\n{channel} is not muted. Doing nothing.')
+            _bot_log.warning(f'{channel} is no muted. Doing nothing.')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'{channel} is not muted. Doing nothing.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to unmute {channel} channel, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
