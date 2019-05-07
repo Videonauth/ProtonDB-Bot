@@ -116,12 +116,10 @@ class Search(commands.Cog):
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'/app/')) != -1:
-                            print(_cite)
                             _search_result = str(_cite)
                             _search_result = _search_result.strip(f'<cite class="iUh30">')
                             _search_result = _search_result.strip(f'</cite>')
                             _search_result = str(re.sub(__strip_pattern__, f'', _search_result))
-                            print(_search_result)
                             _game = _steam_client.getApp(appid=_search_result)
                             break
                 except (IndexError, TypeError, errors.AppNotFound):
@@ -141,12 +139,10 @@ class Search(commands.Cog):
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'sub')) != -1:
-                            print(_cite)
                             _search_result = str(_cite)
                             _search_result = _search_result.strip(f'<cite class="iUh30">')
                             _search_result = _search_result.strip(f'</cite>')
                             _search_result = str(re.sub(__strip_pattern__, f'', _search_result))
-                            print(_search_result)
                             _game = _steam_client.getApp(appid=_search_result)
                             break
                 except (IndexError, TypeError, errors.AppNotFound):
@@ -166,12 +162,10 @@ class Search(commands.Cog):
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'AppId')) != -1:
-                            print(_cite)
                             _search_result = str(_cite)
                             _search_result = _search_result.strip(f'<cite class="iUh30">')
                             _search_result = _search_result.strip(f'</cite>')
                             _search_result = str(re.sub(__strip_pattern__, f'', _search_result))
-                            print(_search_result)
                             _game = _steam_client.getApp(appid=_search_result)
                             break
                 except (IndexError, TypeError, errors.AppNotFound):
@@ -191,12 +185,10 @@ class Search(commands.Cog):
                 try:
                     for _cite in _soup.find_all(f'cite'):
                         if int(str(_cite).find(f'/sub/')) != -1:
-                            print(_cite)
                             _search_result = str(_cite)
                             _search_result = _search_result.strip(f'<cite class="iUh30">')
                             _search_result = _search_result.strip(f'</cite>')
                             _search_result = str(re.sub(__strip_pattern__, f'', _search_result))
-                            print(_search_result)
                             _game = _steam_client.getApp(appid=_search_result)
                             break
                 except (IndexError, TypeError, errors.AppNotFound):
