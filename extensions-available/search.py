@@ -94,13 +94,6 @@ class Search(commands.Cog):
                 except (IndexError, TypeError, errors.AppNotFound):
                     _game = None
 
-            # Assume that search_text is no plain AppId and instead do a steamfront search for Name.
-            if _game is None:
-                try:
-                    _game = _steam_client.getApp(name=search_text, caseSensitive=False)
-                except (IndexError, TypeError, errors.AppNotFound):
-                    _game = None
-
             # Try a google search for 'site:steamdb.info+search_text' divided by '/app/'
             # "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0"
             if _game is None:
@@ -194,6 +187,13 @@ class Search(commands.Cog):
                 except (IndexError, TypeError, errors.AppNotFound):
                     _game = None
 
+                # Assume that search_text is no plain AppId and instead do a steamfront search for Name.
+                if _game is None:
+                    try:
+                        _game = _steam_client.getApp(name=search_text, caseSensitive=False)
+                    except (IndexError, TypeError, errors.AppNotFound):
+                        _game = None
+
             # if all searches have failed add this to output
             if _game is None:
                 _output += f'I\'m sorry, but I could not find any usable input data for your search term.\n'
@@ -275,12 +275,16 @@ class Search(commands.Cog):
                 _about = None
             if _about is not None:
                 # sanitize input
+                _about = _about.replace(f'\r\n', f'')
                 _about = _about.replace(f'<br>', f'\n')
                 _about = _about.replace(f'<strong>', f'**')
                 _about = _about.replace(f'</strong>', f'**')
                 _about = _about.replace(f'<img src="', f'[Image](')
                 _about = _about.replace(f'">', f')')
                 _about = _about.replace(f'" >', f')')
+                _about = _about.replace(f'<br />', f'\n')
+                _about = _about.replace(f'\n\n\n', f'\n\n')
+                _about = _about.replace(f'\n\n\n\n', f'\n\n')
             _embed = discord.Embed(
                 # title=f'Search result:',
                 # description=f'I found the following for "{search_text}".\n\n',
