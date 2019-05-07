@@ -344,14 +344,30 @@ async def load(context, extension: str = ''):
         try:
             _bot_client.load_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Loaded extension: {extension}.')
-            await context.send(f'{context.message.author.mention}\nLoaded {extension}.')
+            _embed = discord.Embed(
+                title=f'Success:',
+                description=f'Loaded {extension}.',
+                colour=discord.Colour.green()
+            )
+            await context.send(embed=_embed)
             return
         except (AttributeError, ImportError, discord.ClientException):
             _bot_log.warning(f'Failed to load extension: {_extension}.')
-            await context.send(f'{context.message.author.mention}\nFailed to load {extension}.')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'Failed to load {extension}.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to load {extension}, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -369,14 +385,30 @@ async def unload(context, extension: str = ''):
         try:
             _bot_client.unload_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Unloaded extension: {extension}')
-            await context.send(f'{context.message.author.mention}\nUnloaded {extension}.')
+            _embed = discord.Embed(
+                title=f'Success:',
+                description=f'Unloaded {extension}.',
+                colour=discord.Colour.green()
+            )
+            await context.send(embed=_embed)
             return
         except (AttributeError, ImportError, discord.ClientException):
             _bot_log.warning(f'Failed to unload extension: {extension}')
-            await context.send(f'{context.message.author.mention}\nFailed to unload {extension}.')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'Failed to unload {extension}.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to unload {extension}, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -396,14 +428,31 @@ async def reload(context, extension: str):
             _bot_log.info(f'Unloaded extension: {extension}')
             _bot_client.load_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Loaded extension: {extension}')
-            await context.send(f'{context.message.author.mention}\nReloaded {extension}.')
+            _bot_log.info(f'Reloading completed.')
+            _embed = discord.Embed(
+                title=f'Success:',
+                description=f'Reloaded {extension}.',
+                colour=discord.Colour.green()
+            )
+            await context.send(embed=_embed)
             return
         except (AttributeError, ImportError, discord.ClientException):
-            _bot_log.warning(f'Failed to unload extension: {extension}')
-            await context.send(f'{context.message.author.mention}\nFailed to reload {extension}.')
+            _bot_log.warning(f'Failed to reload extension: {extension}')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'Failed to reload {extension}.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to reload {extension} but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -417,12 +466,24 @@ async def shutdown(context):
     :param context: The message context
     """
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
-        await context.send(f'{context.message.author.mention}\nGoodbye cruel world.')
+        _bot_log.info(f'Recieved shutdown command, shutting down.')
+        _embed = discord.Embed(
+            title=f'Success:',
+            description=f'Shutting down.',
+            colour=discord.Colour.orange()
+        )
+        await context.send(embed=_embed)
         await _bot_client.logout()
         await _bot_client.close()
         exit(0)
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to shutdown the bot, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -439,6 +500,7 @@ async def modules(context, extension: str):
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         _output = f''
         if extension == f'available':
+            _bot_log.info(f'Listing available modules.')
             _path_available = os.path.join(bot.get(f'runtime_path'), f'extensions-available/')
             _list_available = [
                 f.replace('.py', '') for f in os.listdir(_path_available) if os.path.isfile(os.path.join(
@@ -449,11 +511,22 @@ async def modules(context, extension: str):
             for _module in _list_available:
                 _output += f'{_module}\n'
             if _output:
-                await context.send(f'{context.message.author.mention}\nThe following modules are available:\n{_output}')
+                _embed = discord.Embed(
+                    title=f'Result:',
+                    description=f'The following modules are available:\n{_output}',
+                    colour=discord.Colour.green()
+                )
+                await context.send(embed=_embed)
             else:
-                await context.send(f'{context.message.author.mention}\nThe are no modules available.')
+                _embed = discord.Embed(
+                    title=f'Result:',
+                    description=f'The are no modules available.',
+                    colour=discord.Colour.orange()
+                )
+                await context.send(embed=_embed)
             return
         elif extension == f'enabled':
+            _bot_log.info(f'Listing enabled modules.')
             _path_enabled = os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/')
             _list_enabled = [
                 f.replace('.py', '') for f in os.listdir(_path_enabled) if os.path.isfile(os.path.join(
@@ -464,13 +537,30 @@ async def modules(context, extension: str):
             for _module in _list_enabled:
                 _output += f'{_module}\n'
             if _output:
-                await context.send(f'{context.message.author.mention}\nThe following modules are enabled:\n{_output}')
+                _embed = discord.Embed(
+                    title=f'Result:',
+                    description=f'The following modules are enabled:\n{_output}',
+                    colour=discord.Colour.green()
+                )
+                await context.send(embed=_embed)
             else:
-                await context.send(f'{context.message.author.mention}\nThe are no modules enabled.')
+                _embed = discord.Embed(
+                    title=f'Result:',
+                    description=f'The are no modules enabled.',
+                    colour=discord.Colour.orange()
+                )
+                await context.send(embed=_embed)
+            return
         else:
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to list modules, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -494,8 +584,13 @@ async def enable(context, extension: str):
                     os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py')
                 ])
             except PermissionError:
-                await context.send(f'{context.message.author.mention}\nThe bot is lacking permissions'
-                                   f'to create symlinks.')
+                _bot_log.warning(f'Having no permissions on the file system.')
+                _embed = discord.Embed(
+                    title=f'Failure:',
+                    description=f'The bot is lacking permissions to create symlinks.',
+                    colour=discord.Colour.red()
+                )
+                await context.send(embed=_embed)
                 return
             else:
                 try:
@@ -503,14 +598,32 @@ async def enable(context, extension: str):
                 except (AttributeError, ImportError):
                     _bot_log.warning(f'Failed to load extension: {_extension}')
                 else:
-                    await context.send(f'{context.message.author.mention}\nEnabled {extension}')
+                    _bot_log.info(f'Enabling {extension}.')
+                    _embed = discord.Embed(
+                        title=f'Success:',
+                        description=f'Enabled {extension}.',
+                        colour=discord.Colour.green()
+                    )
+                    await context.send(embed=_embed)
                 finally:
                     return
         else:
-            await context.send(f'{context.message.author.mention}\nThis is not a known extension.')
+            _bot_log.warning(f'ailed to enable {extension}, this is not a known module.')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'This is not a known extension.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
             return
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to enable {extension} module, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
@@ -529,8 +642,13 @@ async def disable(context, extension: str):
             try:
                 os.remove(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py'))
             except PermissionError:
-                await context.send(f'{context.message.author.mention}\nThe bot is lacking permissions'
-                                   f'to remove symlinks.')
+                _bot_log.warning(f'Having no permissions on the file system.')
+                _embed = discord.Embed(
+                    title=f'Failure:',
+                    description=f'The bot is lacking permissions to remove symlinks.',
+                    colour=discord.Colour.red()
+                )
+                await context.send(embed=_embed)
                 return
             else:
                 try:
@@ -538,13 +656,31 @@ async def disable(context, extension: str):
                 except (AttributeError, ImportError):
                     _bot_log.warning(f'Failed to load extension: {_extension}')
                 else:
-                    await context.send(f'{context.message.author.mention}\nDisabled {extension}')
+                    _bot_log.info(f'Disabled {extension}.')
+                    _embed = discord.Embed(
+                        title=f'Success:',
+                        description=f'Disable {extension}.',
+                        colour=discord.Colour.green()
+                    )
+                    await context.send(embed=_embed)
                 finally:
                     return
         else:
-            await context.send(f'{context.message.author.mention}\nThe {extension} is not enabled. Nothing to disable.')
+            _bot_log.warning(f'The {extension} module is not enabled. Nothing to disable')
+            _embed = discord.Embed(
+                title=f'Failure:',
+                description=f'The {extension} module is not enabled. Nothing to disable.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
     else:
-        await context.send(f'{context.message.author.mention}\nYou are not the bot owner, ignoring command.')
+        _bot_log.critical(f'{context.author} Tried to disable {extension} module, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
         return
 
 
