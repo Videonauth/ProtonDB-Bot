@@ -466,7 +466,7 @@ async def shutdown(context):
     :param context: The message context
     """
     if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
-        _bot_log.info(f'Recieved shutdown command, shutting down.')
+        _bot_log.info(f'Received shutdown command, shutting down.')
         _embed = discord.Embed(
             title=f'Success:',
             description=f'Shutting down.',
