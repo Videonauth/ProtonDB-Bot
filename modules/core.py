@@ -389,14 +389,15 @@ def setup_logger(logger_name: str, log_file_name: str, level: int = logging.DEBU
     :param level: logging object (<class 'int'>) defining the log level (by default it logs all logging.DEBUG)
     """
     _logger = logging.getLogger(logger_name)
-    _formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
-    _file_handler = logging.FileHandler(log_file_name, mode='a')
-    _file_handler.setFormatter(_formatter)
-    _stream_handler = logging.StreamHandler()
-    _stream_handler.setFormatter(_formatter)
-    _logger.setLevel(level)
-    _logger.addHandler(_file_handler)
-    _logger.addHandler(_stream_handler)
+    if len(_logger.handlers) == 0:
+        _formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+        _file_handler = logging.FileHandler(log_file_name, mode='a')
+        _file_handler.setFormatter(_formatter)
+        _stream_handler = logging.StreamHandler()
+        _stream_handler.setFormatter(_formatter)
+        _logger.setLevel(level)
+        _logger.addHandler(_file_handler)
+        _logger.addHandler(_stream_handler)
 
 
 def raw_to_file(filename: str, raw: str) -> bool:
