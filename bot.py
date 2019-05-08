@@ -253,7 +253,8 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Initialize logging.
 # ---------------------------------------------------------------------------
-core.setup_logger(f'bot-log', os.path.join(bot.get('runtime_path'), f'logs/bot.log'), level=logging.DEBUG)
+_log_level = logging.DEBUG
+core.setup_logger(f'bot-log', os.path.join(bot.get('runtime_path'), f'logs/bot.log'), level=_log_level)
 _bot_log = logging.getLogger(f'bot-log')
 
 # ---------------------------------------------------------------------------
