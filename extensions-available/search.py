@@ -43,9 +43,9 @@ import modules.core as core
 # ---------------------------------------------------------------------------
 # Initialize logging
 # ---------------------------------------------------------------------------
-core.setup_logger(f'search-log', f'logs/search.log')
+_log_level = logging.DEBUG
+core.setup_logger(f'search-log', f'logs/search.log', level=_log_level)
 _search_log = logging.getLogger(f'search-log')
-_search_log.debug(f'Bot starting up.')
 
 # ---------------------------------------------------------------------------
 # Setting up steam client
@@ -60,6 +60,13 @@ class Search(commands.Cog):
 
     @commands.command(pass_context=True)
     async def search(self, context, *, search_text=''):
+        _search_log.info(f'context.author = {context.author}')
+        _search_log.debug(f'context.message.author.mention = {context.message.author.mention}')
+        _search_log.debug(f'context.message.author.id = {context.message.author.id}')
+        _search_log.info(f'context.guild = {context.guild}')
+        _search_log.info(f'context.channel = {context.channel}')
+        _search_log.debug(f'context.message.content = {context.message.content}')
+        _search_log.info(f'search_text = {search_text}')
         _config = core.json_to_dict(f'config/bot-config.json')
         _permissions = core.json_to_dict(f'config/permissions.json')
 
@@ -77,7 +84,12 @@ class Search(commands.Cog):
         if str(context.author) in _moderators:
             _allowed = True
         if not _allowed:
-            await context.send(f'{context.message.author.mention}\nThe bot is muted in this channel.')
+            _embed = discord.Embed(
+                title=f'Warning:',
+                description=f'The bot is muted in this channel.',
+                colour=discord.Colour.orange()
+            )
+            await context.send(embed=_embed)
             return
 
         # _output = f'{context.message.author.mention}\n'
