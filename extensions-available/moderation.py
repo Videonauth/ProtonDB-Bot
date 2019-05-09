@@ -14,6 +14,8 @@ import discord
 from discord.ext import commands
 import modules.core as core
 
+__version__ = f'0.0.19'
+
 
 class Moderation(commands.Cog):
 

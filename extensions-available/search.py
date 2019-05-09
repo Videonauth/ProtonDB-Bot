@@ -10,7 +10,7 @@
 # Written for: Python 3.6.3
 # ---------------------------------------------------------------------------
 
-__version__ = f'0.0.18'
+__version__ = f'0.0.19'
 __google__ = f'https://www.google.com/search?safe=off&q='
 __duck__ = f'https://duckduckgo.com/?q='
 __steam__ = f'https://store.steampowered.com/app/'
@@ -300,6 +300,8 @@ class Search(commands.Cog):
                 _about = _about.replace(f'<br>', f'\n')
                 _about = _about.replace(f'<strong>', f'**')
                 _about = _about.replace(f'</strong>', f'**')
+                _about = _about.replace(f'<i>', f'*')
+                _about = _about.replace(f'</i>', f'*')
                 _about = _about.replace(f'<img src="', f'[Image](')
                 _about = _about.replace(f'">', f')')
                 _about = _about.replace(f'" >', f')')

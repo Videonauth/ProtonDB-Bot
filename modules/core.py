@@ -23,7 +23,7 @@ import logging
 import subprocess
 from contextlib import suppress
 
-__version__ = f'0.0.18'
+__version__ = f'0.0.19'
 
 
 def bash_command(command: list) -> str or None:
