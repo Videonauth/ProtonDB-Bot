@@ -10,7 +10,7 @@
 # Written for: Python 3.6.3
 # ---------------------------------------------------------------------------
 
-__version__ = f'0.0.18'
+__version__ = f'0.0.19'
 __google__ = f'https://www.google.com/search?safe=off&q='
 __duck__ = f'https://duckduckgo.com/?q='
 __steam__ = f'https://store.steampowered.com/app/'
