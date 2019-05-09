@@ -60,6 +60,16 @@ class Search(commands.Cog):
 
     @commands.command(pass_context=True)
     async def search(self, context, *, search_text=''):
+        """
+        Initiates a search for a game.
+
+        Usage: [prefix]search <(game-name|appid)>
+
+        Note: bot owner, admins and moderators can override mute settings and perform a search in every channel.
+
+        :param context: The message context.
+        :param search_text: The game name or the games appid.
+        """
         _search_log.info(f'context.author = {context.author}')
         _search_log.debug(f'context.message.author.mention = {context.message.author.mention}')
         _search_log.debug(f'context.message.author.id = {context.message.author.id}')
