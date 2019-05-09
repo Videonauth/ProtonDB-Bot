@@ -24,7 +24,7 @@ class Moderation(commands.Cog):
     # async def on_message_delete(self, message):
     #     await message.channel.send(f'Message deleted.')
 
-    @commands.command(pass_context=True, hidden= True)
+    @commands.command(pass_context=True, hidden=True)
     async def moderation(self, context, command: str = f'', value: str = f'', *, message: str = f''):
         """
         Ads or removes admins or moderators. Admins can only be set in by the bot owner.
