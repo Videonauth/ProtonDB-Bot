@@ -30,7 +30,9 @@ class Moderation(commands.Cog):
         Ads or removes admins or moderators. Admins can only be set in by the bot owner.
         Moderators can be added or removed by either bot owner or admins.
 
-        Usage: [prefix]moderation <(add|remove)> <(admin|moderator)>
+        Usage: [prefix]moderation <(add|remove)> <(admin|moderator)> <name>
+
+        Note: <name> has to be a full discord member name. Example: name#1234
 
         :param context: The message context.
         :param command: The command add or remove.
