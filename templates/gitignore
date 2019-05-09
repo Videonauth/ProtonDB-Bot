@@ -23,6 +23,5 @@ __pycache__/
 # we can exclude this as it is only a symlink to make test scripts working
 
 tests/modules
-extensions-available/modules
 
 # You can add your own stuff behind this line
