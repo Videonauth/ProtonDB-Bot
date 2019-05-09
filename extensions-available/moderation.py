@@ -10,7 +10,6 @@
 # Written for: Python 3.6.3
 # ---------------------------------------------------------------------------
 
-import os
 import discord
 from discord.ext import commands
 import modules.core as core
