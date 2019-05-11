@@ -110,11 +110,13 @@ try:
     import discord
     from discord.ext.commands import Bot
     from discord.ext.commands import CommandNotFound
+    from discord.ext.commands import MissingRequiredArgument
 except ImportError:
     requests = None
     discord = None
     Bot = None
     CommandNotFound = None
+    MissingRequiredArgument = None
     print(f'The bot relies on some external packages to be present for running. One or more of them are missing:'
           f' "requests, discord, steamfront, bs4". You can install with your favorite package manager.')
     print(f'Example: "pip3 install requests discord steamfront bs4".')
@@ -326,13 +328,22 @@ async def on_command_error(context, error):
     """
     if isinstance(error, CommandNotFound) and context:
         return
+    if isinstance(error, MissingRequiredArgument) and context:
+        _embed = discord.Embed(
+            title=f'Failure:',
+            description=f'You need to supply parameters to this command. '
+                        f'Remember you can always use the help command to find out more.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
+        return
     raise error
 
 # ---------------------------------------------------------------------------
 # defining basic bot owner commands
 # ---------------------------------------------------------------------------
 @_bot_client.command(pass_context=True, hidden=True)
-async def load(context, extension: str = ''):
+async def load(context, extension: str):
     """
     Loads an extension module into the chat bot
 
@@ -373,7 +384,7 @@ async def load(context, extension: str = ''):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
-async def unload(context, extension: str = ''):
+async def unload(context, extension: str):
     """
     Unloads an extension from the chat bot
 
@@ -745,7 +756,7 @@ async def mute(context, channel: str):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
-async def unmute(context, channel):
+async def unmute(context, channel: str):
     """
     Removes a channel from the list of muted channels.
 
