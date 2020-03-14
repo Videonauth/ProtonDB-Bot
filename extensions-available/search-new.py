@@ -85,7 +85,7 @@ class Result(object):
         self.last_shown = self.created
         self.count_shown = int(0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Data Object: {self.steam_id}: {self.steam_name}'
 
     def get_dict(self) -> dict:
@@ -119,10 +119,7 @@ class Search(commands.Cog):
             print(len(_tmp_data))
             for _key, _value in _tmp_data.items():
                 _tmp_result = Result()
-                if int(_key) == _value.get(f'steam_id'):
-                    _tmp_result.steam_id = _value.get(f'steam_id')
-                else:
-                    break
+                _tmp_result.steam_id = _value.get(f'steam_id')
                 _tmp_result.created = _value.get('created')
                 _tmp_result.last_updated = _value.get('last_updated')
                 _tmp_result.last_modified = _value.get('last_modified')
