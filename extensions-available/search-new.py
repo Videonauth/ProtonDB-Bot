@@ -12,13 +12,13 @@
 
 __version__ = f'0.0.19'
 __google__ = f'https://www.google.com/search?safe=off&q='
-__duck__ = f'https://duckduckgo.com/?q='
+__duck_duck_go__ = f'https://duckduckgo.com/?q='
 __steam__ = f'https://store.steampowered.com/app/'
 __steam_search__ = f'https://store.steampowered.com/search/?term='
 __steam_app_list__ = f'https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json'
 __steamdb__ = 'https://steamdb.info/app/'
 __protondb__ = 'https://www.protondb.com/api/v1/reports/summaries/'
-__fake_firefox__ = f'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv: 73.0) Gecko/20100101 Firefox/73.0'
+__fake_firefox__ = f'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv: 74.0) Gecko/20100101 Firefox/74.0'
 __strip_pattern__ = r'[a-zA-Z.:=/<>?]'
 
 # ---------------------------------------------------------------------------
@@ -85,6 +85,9 @@ class Result(object):
         self.last_shown = self.created
         self.count_shown = int(0)
 
+    def __str__(self):
+        return f'Data Object: {self.steam_id}: {self.steam_name}'
+
     def get_dict(self) -> dict:
         return dict(
             created=self.created,
@@ -132,6 +135,7 @@ class Search(commands.Cog):
                 _tmp_result.last_shown = _value.get('last_shown')
                 _tmp_result.count_shown = _value.get('count_shown')
                 _data.update({_tmp_result.steam_id: _tmp_result})
+                print(_tmp_result)
             _tmp_data.clear()
         else:
             if not os.path.exists(f'data-input/games.json'):
