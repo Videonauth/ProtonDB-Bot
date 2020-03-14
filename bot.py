@@ -302,6 +302,7 @@ else:
 # ---------------------------------------------------------------------------
 _bot_client = Bot(command_prefix=dict(bot.get(f'config')).get(f'bot_prefix'))
 
+
 # ---------------------------------------------------------------------------
 # defining basic bot functions
 # ---------------------------------------------------------------------------
@@ -339,6 +340,7 @@ async def on_command_error(context, error):
         return
     raise error
 
+
 # ---------------------------------------------------------------------------
 # defining basic bot owner commands
 # ---------------------------------------------------------------------------
@@ -352,7 +354,7 @@ async def load(context, extension: str):
     :param context: The message context.
     :param extension: The extension name to load.
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         try:
             _bot_client.load_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Loaded extension: {extension}.')
@@ -393,7 +395,7 @@ async def unload(context, extension: str):
     :param context: The message context
     :param extension: The extension name to unload.
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         try:
             _bot_client.unload_extension(f'extensions-enabled.' + extension)
             _bot_log.info(f'Unloaded extension: {extension}')
@@ -477,7 +479,7 @@ async def shutdown(context):
 
     :param context: The message context
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         _bot_log.info(f'Received shutdown command, shutting down.')
         _embed = discord.Embed(
             title=f'Success:',
@@ -500,6 +502,21 @@ async def shutdown(context):
 
 
 @_bot_client.command(pass_context=True, hidden=True)
+async def restart(context):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+        return
+    else:
+        _bot_log.critical(f'{context.author} Tried to restart the bot, but had no permission.')
+        _embed = discord.Embed(
+            title=f'No permission:',
+            description=f'You are not the bot owner, ignoring command.',
+            colour=discord.Colour.red()
+        )
+        await context.send(embed=_embed)
+        return
+
+
+@_bot_client.command(pass_context=True, hidden=True)
 async def modules(context, extension: str):
     """
     Lists the extension available or enabled.
@@ -509,7 +526,7 @@ async def modules(context, extension: str):
     :param context: The message context
     :param extension: A string containing either available or enabled
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         _output = f''
         if extension == f'available':
             _bot_log.info(f'Listing available modules.')
@@ -586,7 +603,7 @@ async def enable(context, extension: str):
     :param context: The message context.
     :param extension: The extension name to enable
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-available/{extension}.py')):
             try:
                 core.bash_command([
@@ -649,7 +666,7 @@ async def disable(context, extension: str):
     :param context: The message context.
     :param extension: The extension name to disable
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         if os.path.exists(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py')):
             try:
                 os.remove(os.path.join(bot.get(f'runtime_path'), f'extensions-enabled/{extension}.py'))
@@ -706,7 +723,7 @@ async def mute(context, channel: str):
     :param context: The message context.
     :param channel: The channel to mute without the leading #
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         if channel not in dict(bot.get(f'config')).get(f'muted_channels'):
             _channels = list()
             for _channel in _bot_client.get_all_channels():
@@ -765,7 +782,7 @@ async def unmute(context, channel: str):
     :param context: The message context.
     :param channel: The channel to unmute without the leading #
     """
-    if str(context.message.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
+    if str(context.author) == str(dict(bot.get(f'config')).get(f'bot_owner')):
         _temp_config = dict(bot.get(f'config'))
         _muted_channels = list(_temp_config.get(f'muted_channels'))
         if channel in _muted_channels:
