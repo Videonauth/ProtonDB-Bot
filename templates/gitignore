@@ -13,6 +13,7 @@
 config/
 logs/
 testing/
+data/
 
 # neither do we want to know what extensions you have enabled. Nor do we want to have
 # your personal created pycache.
