@@ -94,7 +94,7 @@ class Result(object):
     def __str__(self) -> str:
         return f'Data Object: {self.steam_id}: {self.steam_name}'
 
-    def get_dict(self) -> dict:
+    def to_dict(self) -> dict:
         return dict(
             created=self.created,
             last_updated=self.last_updated,
@@ -113,6 +113,24 @@ class Result(object):
             proton_db_best_rating=self.proton_db_best_rating
         )
 
+    def from_dict(self, _value: dict):
+        self.steam_id = _value.get(f'steam_id')
+        self.created = _value.get('created')
+        self.last_updated = _value.get('last_updated')
+        self.last_modified = _value.get('last_modified')
+        self.steam_id = _value.get('steam_id')
+        self.steam_name = _value.get('steam_name')
+        self.steam_description = _value.get('steam_description')
+        self.steam_price_euro = _value.get('steam_price_euro')
+        self.steam_price_us = _value.get('steam_price_us')
+        self.known_abrevations = _value.get('known_abrevations')
+        self.last_shown = _value.get('last_shown')
+        self.count_shown = _value.get('count_shown')
+        self.proton_db_current_rating = _value.get('proton_db_current_rating')
+        self.proton_db_number_reports = _value.get('proton_db_number_reports')
+        self.proton_db_trending = _value.get('proton_db_trending')
+        self.proton_db_best_rating = _value.get('proton_db_best_rating')
+
 
 _data = dict({})
 _save_output = dict({})
@@ -122,32 +140,16 @@ class Search(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-
-        # class specific initialisations
         if os.path.exists(f'data/data.json'):
+            _tmp_data = dict({})
             _tmp_data = core.json_to_dict(f'data/data.json')
             for _key, _value in _tmp_data.items():
                 _tmp_result = Result()
-                _tmp_result.steam_id = _value.get(f'steam_id')
-                _tmp_result.created = _value.get('created')
-                _tmp_result.last_updated = _value.get('last_updated')
-                _tmp_result.last_modified = _value.get('last_modified')
-                _tmp_result.steam_id = _value.get('steam_id')
-                _tmp_result.steam_name = _value.get('steam_name')
-                _tmp_result.steam_description = _value.get('steam_description')
-                _tmp_result.steam_price_euro = _value.get('steam_price_euro')
-                _tmp_result.steam_price_us = _value.get('steam_price_us')
-                _tmp_result.known_abrevations = _value.get('known_abrevations')
-                _tmp_result.last_shown = _value.get('last_shown')
-                _tmp_result.count_shown = _value.get('count_shown')
-                _tmp_result.proton_db_current_rating = _value.get('proton_db_current_rating')
-                _tmp_result.proton_db_number_reports = _value.get('proton_db_number_reports')
-                _tmp_result.proton_db_trending = _value.get('proton_db_trending')
-                _tmp_result.proton_db_best_rating = _value.get('proton_db_best_rating')
+                _tmp_result.from_dict(_value)
                 _data.update({_tmp_result.steam_id: _tmp_result})
             _tmp_data.clear()
         else:
-            _tmp_games = dict({})
+            _tmp_data = list([])
             _url = __steam_app_list__
             _response = requests.get(
                 url=_url,
@@ -158,17 +160,59 @@ class Search(commands.Cog):
                 _search_log.critical(f'Could not fetch url={_url}.')
                 _search_log.critical(f'Response: {_response.status_code}')
                 exit(1)
-            print(_response.status_code)
-            _tmp_games = _response.json()[f'applist'][f'apps']
-            for _entry in _tmp_games:
+            _tmp_data = _response.json()[f'applist'][f'apps']
+            for _value in _tmp_data:
                 _tmp_result = Result()
-                _tmp_result.steam_id = _entry.get(f'appid')
-                _tmp_result.steam_name = _entry.get(f'name')
+                _tmp_result.steam_id = _value.get(f'appid')
+                _tmp_result.steam_name = _value.get(f'name')
                 _data.update({_tmp_result.steam_id: _tmp_result})
-                _save_output.update({_tmp_result.steam_id: _tmp_result.get_dict()})
+                _save_output.update({_tmp_result.steam_id: _tmp_result.to_dict()})
             core.dict_to_json(_save_output, f'data/data.json')
-            _tmp_games = dict({})
+            _tmp_data = list([])
             _save_output.clear()
+
+    @commands.command(pass_context=True, hidden=True)
+    async def dumpdb(self, context):
+        """
+        Dumps the database to file.
+
+        Usage: [prefix]dumpdb
+
+        :param context: The message context.
+        """
+        _search_log.info(f'context.author = {context.author}')
+        _search_log.debug(f'context.message.author.mention = {context.message.author.mention}')
+        _search_log.debug(f'context.message.author.id = {context.message.author.id}')
+        _search_log.info(f'context.guild = {context.guild}')
+        _search_log.info(f'context.channel = {context.channel}')
+        _search_log.debug(f'context.message.content = {context.message.content}')
+        _config = core.json_to_dict(f'config/bot-config.json')
+        _permissions = core.json_to_dict(f'config/permissions.json')
+
+        _muted_channels = _config.get(f'muted_channels')
+        _admins = _permissions.get(f'admins')
+        _moderators = _permissions.get(f'moderators')
+
+        _allowed = False
+        if str(context.author) == str(_config.get(f'bot_owner')):
+            _allowed = True
+        if str(context.author) in _admins:
+            _allowed = True
+        if not _allowed:
+            _embed = discord.Embed(
+                title=f'Warning:',
+                description=f'Only bot owner and admins can issue this command.',
+                colour=discord.Colour.red()
+            )
+            await context.send(embed=_embed)
+            return
+
+        _save_output.clear()
+        for _key, _value in _data.items():
+            _save_output.update({_key: _value.to_dict()})
+        core.dict_to_json(_save_output, f'data/data.json')
+        _save_output.clear()
+        return
 
     @commands.command(pass_context=True)
     async def search(self, context, *, search_text=f''):
