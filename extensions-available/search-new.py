@@ -85,6 +85,12 @@ class Result(object):
         self.last_shown = self.created
         self.count_shown = int(0)
 
+        # Initialize ProtonDB variables
+        self.proton_db_current_rating = None
+        self.proton_db_number_reports = None
+        self.proton_db_trending = None
+        self.proton_db_best_rating = None
+
     def __str__(self) -> str:
         return f'Data Object: {self.steam_id}: {self.steam_name}'
 
@@ -100,7 +106,11 @@ class Result(object):
             steam_price_us=self.steam_price_us,
             known_abrevations=self.known_abrevations,
             last_shown=self.last_shown,
-            count_shown=self.count_shown
+            count_shown=self.count_shown,
+            proton_db_current_rating=self.proton_db_current_rating,
+            proton_db_number_reports=self.proton_db_number_reports,
+            proton_db_trending=self.proton_db_trending,
+            proton_db_best_rating=self.proton_db_best_rating
         )
 
 
@@ -116,7 +126,6 @@ class Search(commands.Cog):
         # class specific initialisations
         if os.path.exists(f'data/data.json'):
             _tmp_data = core.json_to_dict(f'data/data.json')
-            print(len(_tmp_data))
             for _key, _value in _tmp_data.items():
                 _tmp_result = Result()
                 _tmp_result.steam_id = _value.get(f'steam_id')
@@ -131,26 +140,35 @@ class Search(commands.Cog):
                 _tmp_result.known_abrevations = _value.get('known_abrevations')
                 _tmp_result.last_shown = _value.get('last_shown')
                 _tmp_result.count_shown = _value.get('count_shown')
+                _tmp_result.proton_db_current_rating = _value.get('proton_db_current_rating')
+                _tmp_result.proton_db_number_reports = _value.get('proton_db_number_reports')
+                _tmp_result.proton_db_trending = _value.get('proton_db_trending')
+                _tmp_result.proton_db_best_rating = _value.get('proton_db_best_rating')
                 _data.update({_tmp_result.steam_id: _tmp_result})
-                print(_tmp_result)
             _tmp_data.clear()
         else:
-            if not os.path.exists(f'data-input/games.json'):
-                core.bash_command([f'curl', f'{__steam_app_list__}', f'-o', 'data-input/games.json'])
             _tmp_games = dict({})
-            if os.path.exists(f'data-input/games.json'):
-                _tmp_games = core.json_to_dict('data-input/games.json')
-                _tmp_games = _tmp_games.get(f'applist')
-                _tmp_games = _tmp_games.get(f'apps')
-                for _entry in _tmp_games:
-                    _tmp_result = Result()
-                    _tmp_result.steam_id = _entry.get(f'appid')
-                    _tmp_result.steam_name = _entry.get(f'name')
-                    _data.update({_tmp_result.steam_id: _tmp_result})
-                    _save_output.update({_tmp_result.steam_id: _tmp_result.get_dict()})
-                core.dict_to_json(_save_output, f'data/data.json')
-                _tmp_games = dict({})
-                _save_output.clear()
+            _url = __steam_app_list__
+            _response = requests.get(
+                url=_url,
+                headers={f'User-Agent': __fake_firefox__,
+                         f'Referer': '-'}
+            )
+            if _response.status_code != 200:
+                _search_log.critical(f'Could not fetch url={_url}.')
+                _search_log.critical(f'Response: {_response.status_code}')
+                exit(1)
+            print(_response.status_code)
+            _tmp_games = _response.json()[f'applist'][f'apps']
+            for _entry in _tmp_games:
+                _tmp_result = Result()
+                _tmp_result.steam_id = _entry.get(f'appid')
+                _tmp_result.steam_name = _entry.get(f'name')
+                _data.update({_tmp_result.steam_id: _tmp_result})
+                _save_output.update({_tmp_result.steam_id: _tmp_result.get_dict()})
+            core.dict_to_json(_save_output, f'data/data.json')
+            _tmp_games = dict({})
+            _save_output.clear()
 
     @commands.command(pass_context=True)
     async def search(self, context, *, search_text=f''):
