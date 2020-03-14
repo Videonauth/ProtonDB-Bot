@@ -390,7 +390,7 @@ def setup_logger(logger_name: str, log_file_name: str, level: int = logging.DEBU
     """
     _logger = logging.getLogger(logger_name)
     if len(_logger.handlers) == 0:
-        _formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+        _formatter = logging.Formatter('%(asctime)s %(name)s: %(levelname)s: %(message)s')
         _file_handler = logging.FileHandler(log_file_name, mode='a')
         _file_handler.setFormatter(_formatter)
         _stream_handler = logging.StreamHandler()
