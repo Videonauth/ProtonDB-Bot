@@ -261,19 +261,47 @@ class Search(commands.Cog):
         _output = f''
         _result = Result()
         if search_text != f'':
-            # for _key, _value in _data:
-            #     print(f'{_key} : {_value}')
-            #     if _value.steam_id == search_text:
-            #         #_result.steam_id = _value.steam_id
-
-            # TODO: search own db
-            # TODO: if not present in own db or not found search steampowered.com
+            # Searching own database
+            for _key, _value in _data.items():
+                if str(_value.steam_id) == search_text:
+                    _result.from_dict(_value.to_dict())
+                    break
+                if str(_value.steam_name) == search_text:
+                    _result.from_dict(_value.to_dict())
+                    break
+                if search_text in _value.known_abrevations:
+                    _result.from_dict(_value.to_dict())
+                    break
+            # searching Steam store
+            if _result.steam_id == -1:
+                # TODO: if not present in own db or not found search steampowered.com
+                _url = f'{__steam_search__}{search_text.replace(" ", "+")}'
+                _response = requests.get(
+                    url=_url,
+                    headers={f'User-Agent': __fake_firefox__,
+                             f'Referer': '-'}
+                )
+                if _response.status_code == 200:
+                    _tmp_list = _response.text.split(f'<!-- List Items -->')
+                    _tmp_list = _tmp_list[1].split(f'<!-- End List Items -->')
+                    _tmp_data = _tmp_list[0]
+                    print(_tmp_data)
             # TODO: update own db
-            if _result.steam_id is not int(-1):
+            if _result.steam_id != -1:
                 # TODO: output result
+                _output += f'{_result.steam_name}.\n'
+                _output += f'{_result.steam_id}.\n'
+                _embed = discord.Embed(
+                    description=_output,
+                    colour=discord.Colour.from_rgb(0xff, 0xff, 0xff)
+                )
+                await context.send(embed=_embed)
                 return
             else:
-                _output += f'Search turned up nothing.\n'
+                _output += f'I\'m sorry, but I could not find any usable input data for your search term.\n'
+                _output += f'\n'
+                _output += f'[Search with Google.]({__google__ + search_text.replace(" ", "+")})\n\n'
+                _output += f'[Search with Duck Duck Go.]({__duck_duck_go__ + search_text.replace(" ", "*")})\n'
                 _embed = discord.Embed(
                     title=f'Error:',
                     description=_output,
