@@ -30,6 +30,9 @@ class Data(object):
         self.steam_platforms = dict({})
         self.steam_publishers = list([])
         self.steam_price_overview = dict({})
+        self.steam_release_date = str(f'')
+        self.steam_coming_soon = bool(False)
+        self.steam_required_age = str(f'')
 
         # metacritic
         self.metacritic_score = int(-1)
@@ -69,6 +72,9 @@ class Data(object):
             steam_platforms=self.steam_platforms,
             steam_publishers=self.steam_publishers,
             steam_price_overview=self.steam_price_overview,
+            steam_release_date=self.steam_release_date,
+            steam_coming_soon=self.steam_coming_soon,
+            steam_required_age=self.steam_required_age,
             metacritic_score=self.metacritic_score,
             metacritic_link=self.metacritic_link,
             known_abrevations=self.known_abrevations,
@@ -156,6 +162,12 @@ class Data(object):
                     _tmp_int = int(self.steam_price_overview.get(f'initial'))
                     _tmp_float = float(_tmp_int) / float(10.000)
                     self.steam_price_us = _tmp_float
+        if f'release_date' in _value.keys():
+            _tmp_dict = _value.get(f'release_date')
+            self.steam_release_date = _tmp_dict.get(f'date')
+            self.steam_coming_soon = _tmp_dict.get(f'coming_soon')
+        if f'required_age' in _value.keys():
+            self.steam_required_age = _value.get(f'required_age')
 
 
 if __name__ == f'__main__':
