@@ -80,6 +80,8 @@ class Result(object):
         self.steam_short_description = str(f'')
         self.steam_detailed_description = str(f'')
         self.steam_about = str(f'')
+        self.steam_header_image = str(f'')
+        self.steam_legal_notice = str(f'')
 
         # Initialize the list of known abrevations.
         self.known_abrevations = list([])
@@ -97,6 +99,7 @@ class Result(object):
     def __str__(self) -> str:
         return f'Data Object: {self.steam_id}: {self.steam_name}'
 
+    @staticmethod
     def to_dict(self) -> dict:
         return dict(
             created=self.created,
@@ -107,6 +110,8 @@ class Result(object):
             steam_short_description=self.steam_short_description,
             steam_detailed_description=self.steam_detailed_description,
             steam_about=self.steam_about,
+            steam_header_image=self.steam_header_image,
+            steam_legal_notice=self.steam_legal_notice,
             steam_price_euro=self.steam_price_euro,
             steam_price_us=self.steam_price_us,
             known_abrevations=self.known_abrevations,
@@ -165,6 +170,10 @@ class Result(object):
             self.steam_detailed_description = _value.get(f'detailed_description')
         if f'about_the_game' in _value.keys():
             self.steam_about = _value.get(f'about_the_game')
+        if f'header_image' in _value.keys():
+            self.steam_header_image = _value.get(f'header_image')
+        if f'legal_notice' in _value.keys():
+            self.steam_legal_notice = _value.get(f'legal_notice')
 
 
 _data = dict({})
