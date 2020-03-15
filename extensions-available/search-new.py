@@ -224,9 +224,7 @@ class Search(commands.Cog):
         _config = core.json_to_dict(f'config/bot-config.json')
         _permissions = core.json_to_dict(f'config/permissions.json')
 
-        _muted_channels = _config.get(f'muted_channels')
         _admins = _permissions.get(f'admins')
-        _moderators = _permissions.get(f'moderators')
 
         _allowed = False
         if str(context.author) == str(_config.get(f'bot_owner')):
@@ -335,6 +333,7 @@ class Search(commands.Cog):
                         _tmp_db_entry.from_dict(_tmp_steamfront.raw)
                         print(_tmp_db_entry.to_dict())
                         print(_tmp_steamfront.raw)
+                        core.dict_to_json(_tmp_steamfront.raw, f'data/steamfront.json')
             # TODO: update own db
             if _result.steam_id != -1:
                 # TODO: output result
