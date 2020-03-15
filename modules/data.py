@@ -11,17 +11,33 @@ class Data(object):
     # Constructor, here all variables the data class has are initialized
     def __init__(self) -> None:
         # Fill the three time variables (this is the only place where they are the same).
-        # self.created is to be treated immutable!
+        # NOTE: self.created is to be treated immutable except on copying in an objects dict output!
         self.created = time.time()
-        self.last_updated_steamfront = self.created
+
+        # Timestamp of last modification done to the data set.
         self.last_modified = self.created
 
-        # Pre initialize the steam variables
+        # Timestamps of the different websites when last requested data from them.
+        self.last_updated_steam_search = self.created
+        self.last_updated_steamdb = self.created
+        self.last_updated_protondb = self.created
+        self.last_updated_steamfront = self.created
+
+        # Bot metrics
+        self.last_shown = self.created
+        self.count_shown = int(0)
+
+        # Initialize the list of known abrevations.
+        self.known_abrevations = list([])
+
+        # The data we get from the app-list.json from steam
         self.steam_id = int(-1)
         self.steam_name = str('')
+
+        # Data we fetch via steamfront API library
+        self.steam_appid = int(-1)
+        self.name = str(f'')
         self.steam_is_free = bool(False)
-        self.steam_price_euro = float(0.000)
-        self.steam_price_us = float(0.000)
         self.steam_short_description = str(f'')
         self.steam_detailed_description = str(f'')
         self.steam_about = str(f'')
@@ -38,18 +54,15 @@ class Data(object):
         self.metacritic_score = int(-1)
         self.metacritic_link = str(f'')
 
-        # Initialize the list of known abrevations.
-        self.known_abrevations = list([])
-
-        # Initialize metrics variables
-        self.last_shown = self.created
-        self.count_shown = int(0)
-
         # Initialize ProtonDB variables
         self.proton_db_current_rating = None
         self.proton_db_number_reports = None
         self.proton_db_trending = None
         self.proton_db_best_rating = None
+
+        # Derivate price data
+        self.steam_price_euro = float(0.000)
+        self.steam_price_us = float(0.000)
 
     def __str__(self) -> str:
         return f'Data Object: {self.steam_id}: {self.steam_name}'
@@ -140,7 +153,7 @@ class Data(object):
         if f'metacritic' in _value.keys():
             _tmp_dict = _value.get(f'metacritic')
             self.metacritic_score = _tmp_dict.get(f'score')
-            self.metacritic_link = _tmp_dict(f'url')
+            self.metacritic_link = _tmp_dict.get(f'url')
         if f'is_free' in _value.keys():
             self.steam_is_free = _value.get(f'is_free')
         if f'platforms' in _value.keys():
