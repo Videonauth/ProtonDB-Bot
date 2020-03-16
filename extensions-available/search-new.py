@@ -46,6 +46,7 @@ from bs4 import BeautifulSoup as Soup
 # importing core library
 # ---------------------------------------------------------------------------
 import modules.core as core
+from modules.data import Data as Data
 
 # ---------------------------------------------------------------------------
 # Initialize logging (changed for testing)
@@ -59,123 +60,6 @@ _search_log = logging.getLogger(f'search-new-log')
 # ---------------------------------------------------------------------------
 _steam_client = steamfront.Client()
 
-
-class Result(object):
-    """
-    Main data class for the search database.
-    """
-    # Constructor, here all variables the data class has are initialized
-    def __init__(self) -> None:
-        # Fill the three time variables (this is the only place where they are the same).
-        # self.created is to be treated immutable!
-        self.created = time.time()
-        self.last_updated_steamfront = self.created
-        self.last_modified = self.created
-
-        # Pre initialize the steam variables
-        self.steam_id = int(-1)
-        self.steam_name = str('')
-        self.steam_price_euro = float(0.000)
-        self.steam_price_us = float(0.000)
-        self.steam_short_description = str(f'')
-        self.steam_detailed_description = str(f'')
-        self.steam_about = str(f'')
-        self.steam_header_image = str(f'')
-        self.steam_legal_notice = str(f'')
-
-        # Initialize the list of known abrevations.
-        self.known_abrevations = list([])
-
-        # Initialize metrics variables
-        self.last_shown = self.created
-        self.count_shown = int(0)
-
-        # Initialize ProtonDB variables
-        self.proton_db_current_rating = None
-        self.proton_db_number_reports = None
-        self.proton_db_trending = None
-        self.proton_db_best_rating = None
-
-    def __str__(self) -> str:
-        return f'Data Object: {self.steam_id}: {self.steam_name}'
-
-    @staticmethod
-    def to_dict(self) -> dict:
-        return dict(
-            created=self.created,
-            last_updated_steamfront=self.last_updated_steamfront,
-            last_modified=self.last_modified,
-            steam_id=self.steam_id,
-            steam_name=self.steam_name,
-            steam_short_description=self.steam_short_description,
-            steam_detailed_description=self.steam_detailed_description,
-            steam_about=self.steam_about,
-            steam_header_image=self.steam_header_image,
-            steam_legal_notice=self.steam_legal_notice,
-            steam_price_euro=self.steam_price_euro,
-            steam_price_us=self.steam_price_us,
-            known_abrevations=self.known_abrevations,
-            last_shown=self.last_shown,
-            count_shown=self.count_shown,
-            proton_db_current_rating=self.proton_db_current_rating,
-            proton_db_number_reports=self.proton_db_number_reports,
-            proton_db_trending=self.proton_db_trending,
-            proton_db_best_rating=self.proton_db_best_rating
-        )
-
-    def from_dict(self, _value: dict):
-        if f'steam_id' in _value.keys():
-            self.steam_id = _value.get(f'steam_id')
-        if f'created' in _value.keys():
-            self.created = _value.get(f'created')
-        if f'last_updated_steamfront' in _value.keys():
-            self.last_updated_steamfront = _value.get(f'last_updated_steamfront')
-        if f'last_modified' in _value.keys():
-            self.last_modified = _value.get(f'last_modified')
-        if f'steam_name' in _value.keys():
-            self.steam_name = _value.get(f'steam_name')
-        if f'steam_short_description' in _value.keys():
-            self.steam_short_description = _value.get(f'steam_short_description')
-        if f'steam_detailed_description' in _value.keys():
-            self.steam_detailed_description = _value.get(f'steam_detailed_description')
-        if f'steam_about' in _value.keys():
-            self.steam_about = _value.get(f'steam_about')
-        if f'steam_price_euro' in _value.keys():
-            self.steam_price_euro = _value.get(f'steam_price_euro')
-        if f'steam_price_us' in _value.keys():
-            self.steam_price_us = _value.get(f'steam_price_us')
-        if f'known_abrevations' in _value.keys():
-            self.known_abrevations = _value.get(f'known_abrevations')
-        if f'last_shown' in _value.keys():
-            self.last_shown = _value.get(f'last_shown')
-        if f'count_shown' in _value.keys():
-            self.count_shown = _value.get(f'count_shown')
-        if f'proton_db_current_rating' in _value.keys():
-            self.proton_db_current_rating = _value.get(f'proton_db_current_rating')
-        if f'proton_db_number_reports' in _value.keys():
-            self.proton_db_number_reports = _value.get(f'proton_db_number_reports')
-        if f'proton_db_trending' in _value.keys():
-            self.proton_db_trending = _value.get(f'proton_db_trending')
-        if f'proton_db_best_rating' in _value.keys():
-            self.proton_db_best_rating = _value.get(f'proton_db_best_rating')
-        # handling steamfront
-        if f'steam_appid' in _value.keys():
-            if _value.get(f'steam_appid') == self.steam_id:
-                pass
-            else:
-                return
-        if f'short_description' in _value.keys():
-            self.steam_short_description = _value.get(f'short_description')
-        if f'detailed_description' in _value.keys():
-            self.steam_detailed_description = _value.get(f'detailed_description')
-        if f'about_the_game' in _value.keys():
-            self.steam_about = _value.get(f'about_the_game')
-        if f'header_image' in _value.keys():
-            self.steam_header_image = _value.get(f'header_image')
-        if f'legal_notice' in _value.keys():
-            self.steam_legal_notice = _value.get(f'legal_notice')
-
-
 _data = dict({})
 _save_output = dict({})
 
@@ -188,7 +72,7 @@ class Search(commands.Cog):
             _tmp_data = dict({})
             _tmp_data = core.json_to_dict(f'data/data.json')
             for _key, _value in _tmp_data.items():
-                _tmp_result = Result()
+                _tmp_result = Data()
                 _tmp_result.from_dict(_value)
                 _data.update({_tmp_result.steam_id: _tmp_result})
             _tmp_data.clear()
@@ -206,7 +90,7 @@ class Search(commands.Cog):
                 exit(1)
             _tmp_data = _response.json()[f'applist'][f'apps']
             for _value in _tmp_data:
-                _tmp_result = Result()
+                _tmp_result = Data()
                 _tmp_result.steam_id = _value.get(f'appid')
                 _tmp_result.steam_name = _value.get(f'name')
                 _data.update({_tmp_result.steam_id: _tmp_result})
@@ -301,7 +185,7 @@ class Search(commands.Cog):
             return
 
         _output = f''
-        _result = Result()
+        _result = Data()
         if search_text != f'':
             # Searching own database
             for _key, _value in _data.items():
@@ -341,8 +225,8 @@ class Search(commands.Cog):
                         _tmp_steamfront = _steam_client.getApp(appid=str(_tmp_data))
                         _tmp_db_entry.from_dict(_tmp_steamfront.raw)
                         print(_tmp_db_entry.to_dict())
-                        print(_tmp_steamfront.raw)
-                        core.dict_to_json(_tmp_steamfront.raw, f'data/steamfront.json')
+                        # print(_tmp_steamfront.raw)
+                        # core.dict_to_json(_tmp_steamfront.raw, f'data/steamfront.json')
             # TODO: update own db
             if _result.steam_id != -1:
                 # TODO: output result
