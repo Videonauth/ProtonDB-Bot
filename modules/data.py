@@ -76,7 +76,7 @@ class Data(object):
         self.pc_requirements = dict({})
         self.controller_support = str(f'')
         # Age information
-        self.steam_required_age = str(f'')
+        self.required_age = str(f'')
 
         # Data we fetch from ProtonDB
         self.confidence = str(f'')
@@ -91,40 +91,84 @@ class Data(object):
         self.steam_price_euro = float(0.000)
         self.steam_price_us = float(0.000)
 
-    def __str__(self) -> str:
-        return f'Data Object: {self.steam_id}: {self.steam_name}'
-
     def to_dict(self) -> dict:
         return dict(
+            # The time variables.
+            # NOTE: self.created is to be treated immutable except on copying in an objects dict output!
             created=self.created,
-            last_updated_steamfront=self.last_updated_steamfront,
+            # Timestamp of last modification done to the data set.
             last_modified=self.last_modified,
-            steam_id=self.steam_id,
-            steam_name=self.steam_name,
-            steam_short_description=self.steam_short_description,
-            steam_detailed_description=self.steam_detailed_description,
-            steam_about=self.steam_about,
-            steam_header_image=self.steam_header_image,
-            steam_legal_notice=self.steam_legal_notice,
-            steam_is_free=self.steam_is_free,
-            steam_price_euro=self.steam_price_euro,
-            steam_price_us=self.steam_price_us,
-            steam_platforms=self.steam_platforms,
-            steam_publishers=self.steam_publishers,
-            steam_price_overview=self.steam_price_overview,
-            steam_release_date=self.steam_release_date,
-            steam_coming_soon=self.steam_coming_soon,
-            steam_required_age=self.steam_required_age,
-            metacritic_score=self.metacritic_score,
-            metacritic_link=self.metacritic_link,
-            known_abrevations=self.known_abrevations,
+            # Timestamps of the different websites when last requested data from them.
+            last_updated_steam_search=self.last_updated_steam_search,
+            last_updated_steamdb=self.last_updated_steamdb,
+            last_updated_protondb=self.last_updated_protondb,
+            last_updated_steamfront=self.last_updated_steamfront,
+            # Bot metrics
             last_shown=self.last_shown,
             count_shown=self.count_shown,
-            proton_db_current_rating=self.proton_db_current_rating,
-            proton_db_number_reports=self.proton_db_number_reports,
-            proton_db_trending=self.proton_db_trending,
-            proton_db_best_rating=self.proton_db_best_rating
+            # Initialize the list of known abrevations.
+            known_abrevations=self.known_abrevations,
+            # The data we get from the app-list.json from steam
+            steam_id=self.steam_id,
+            steam_name=self.steam_name,
+            # Data we fetch via steamfront API library
+            steam_appid=self.steam_appid,
+            name=self.name,
+            type=self.type,
+            release_date=self.release_date,
+            recommendations=self.recommendations,
+            supported_languages=self.supported_languages,
+            # Pricing
+            is_free=self.is_free,
+            price_overview=self.price_overview,
+            dlc=self.dlc,
+            package_groups=self.package_groups,
+            packages=self.packages,
+            # Categories information
+            categories=self.categories,
+            genres=self.genres,
+            achievements=self.achievements,
+            # Developer and publisher info including support and website link
+            developers=self.developers,
+            publishers=self.publishers,
+            legal_notice=self.legal_notice,
+            support_info=self.support_info,
+            website=self.website,
+            ext_user_account_notice=self.ext_user_account_notice,
+            # Metacritic
+            metacritic=self.metacritic,
+            # Description and about
+            short_description=self.short_description,
+            detailed_description=self.detailed_description,
+            about_the_game=self.about_the_game,
+            # Image and screenshots
+            background=self.background,
+            header_image=self.header_image,
+            screenshots=self.screenshots,
+            movies=self.movies,
+            # Platforms and requirements information
+            platforms=self.platforms,
+            linux_requirements=self.linux_requirements,
+            mac_requirements=self.mac_requirements,
+            pc_requirements=self.pc_requirements,
+            controller_support=self.controller_support,
+            # Age information
+            required_age=self.required_age,
+            # Data we fetch from ProtonDB
+            confidence=self.confidence,
+            score=self.score,
+            tier=self.tier,
+            total=self.total,
+            trendingTier=self.trendingTier,
+            bestReportedTier=self.bestReportedTier,
+            # Derivate data
+            native=self.native,
+            steam_price_euro=self.steam_price_euro,
+            steam_price_us=self.steam_price_us
         )
+
+    def __str__(self) -> str:
+        return f'{self.to_dict()}'
 
     def from_dict(self, _value: dict):
         if f'steam_id' in _value.keys():
