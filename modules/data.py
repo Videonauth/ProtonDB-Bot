@@ -37,30 +37,57 @@ class Data(object):
         # Data we fetch via steamfront API library
         self.steam_appid = int(-1)
         self.name = str(f'')
-        self.steam_is_free = bool(False)
-        self.steam_short_description = str(f'')
-        self.steam_detailed_description = str(f'')
-        self.steam_about = str(f'')
-        self.steam_header_image = str(f'')
-        self.steam_legal_notice = str(f'')
-        self.steam_platforms = dict({})
-        self.steam_publishers = list([])
-        self.steam_price_overview = dict({})
-        self.steam_release_date = str(f'')
-        self.steam_coming_soon = bool(False)
+        self.type = str(f'')
+        self.release_date = dict({})
+        self.recommendations = dict({})
+        self.supported_languages = str(f'')
+        # Pricing
+        self.is_free = bool(False)
+        self.price_overview = dict({})
+        self.dlc = list([])
+        self.package_groups = list([])
+        self.packages = list([])
+        # Categories information
+        self.categories = dict({})
+        self.genres = list([])
+        self.achievements = dict({})
+        # Developer and publisher info including support and website link
+        self.developers = list([])
+        self.publishers = list([])
+        self.legal_notice = str(f'')
+        self.support_info = dict({})
+        self.website = str(f'')
+        self.ext_user_account_notice = str(f'')
+        # Metacritic
+        self.metacritic = dict({})
+        # Description and about
+        self.short_description = str(f'')
+        self.detailed_description = str(f'')
+        self.about_the_game = str(f'')
+        # Image and screenshots
+        self.background = str(f'')
+        self.header_image = str(f'')
+        self.screenshots = list([])
+        self.movies = list([])
+        # Platforms and requirements information
+        self.platforms = dict({})
+        self.linux_requirements = dict({})
+        self.mac_requirements = dict({})
+        self.pc_requirements = dict({})
+        self.controller_support = str(f'')
+        # Age information
         self.steam_required_age = str(f'')
 
-        # metacritic
-        self.metacritic_score = int(-1)
-        self.metacritic_link = str(f'')
+        # Data we fetch from ProtonDB
+        self.confidence = str(f'')
+        self.score = float(0.000)
+        self.tier = str(f'')
+        self.total = int(-1)
+        self.trendingTier = str(f'')
+        self.bestReportedTier = str(f'')
 
-        # Initialize ProtonDB variables
-        self.proton_db_current_rating = None
-        self.proton_db_number_reports = None
-        self.proton_db_trending = None
-        self.proton_db_best_rating = None
-
-        # Derivate price data
+        # Derivate data
+        self.native = bool(False)
         self.steam_price_euro = float(0.000)
         self.steam_price_us = float(0.000)
 
