@@ -274,14 +274,11 @@ class Data(object):
         if f'platforms' in dict_item.keys():
             self.platforms = dict(dict_item.get(f'platforms'))
         if f'linux_requirements' in dict_item.keys():
-            _tmp_str = core.html_to_discord(str(dict_item.get(f'linux_requirements')))
-            self.linux_requirements = dict(_tmp_str)
+            self.linux_requirements = dict(dict_item.get(f'linux_requirements'))
         if f'mac_requirements' in dict_item.keys():
-            _tmp_str = core.html_to_discord(str(dict_item.get(f'mac_requirements')))
-            self.mac_requirements = dict(_tmp_str)
+            self.mac_requirements = dict(dict_item.get(f'mac_requirements'))
         if f'pc_requirements' in dict_item.keys():
-            _tmp_str = core.html_to_discord(str(dict_item.get(f'pc_requirements')))
-            self.pc_requirements = dict(_tmp_str)
+            self.pc_requirements = dict(dict_item.get(f'pc_requirements'))
         if f'controller_support' in dict_item.keys():
             self.controller_support = str(dict_item.get(f'controller_support'))
         # Age information
