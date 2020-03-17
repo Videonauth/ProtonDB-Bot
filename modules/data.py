@@ -10,7 +10,7 @@ class Data(object):
     """
     # Constructor, here all variables the data class has are initialized
     def __init__(self) -> None:
-        # Fill the three time variables (this is the only place where they are the same).
+        # Fill the time variables (this is the only place where they are the same).
         # NOTE: self.created is to be treated immutable except on copying in an objects dict output!
         self.created = time.time()
 
@@ -171,7 +171,7 @@ class Data(object):
         return f'{self.to_dict()}'
 
     def from_dict(self, dict_item: dict):
-        # Fill the three time variables (this is the only place where they are the same).
+        # Fill the time variables.
         # NOTE: self.created is to be treated immutable except on copying in an objects dict output!
         if f'created' in dict_item.keys():
             if dict_item.get(f'created') < self.created:
@@ -205,64 +205,103 @@ class Data(object):
             self.steam_name = str(dict_item.get(f'steam_name'))
         # Data we fetch via steamfront API library
         if f'steam_appid' in dict_item.keys():
-            self.steam_appid = int(-1)
+            self.steam_appid = int(dict_item.get(f'steam_appid'))
+        if f'name' in dict_item.keys():
+            self.name = str(dict_item.get(f'name'))
+        if f'type' in dict_item.keys():
+            self.type = str(dict_item.get(f'type'))
+        if f'release_date' in dict_item.keys():
+            self.release_date = dict(dict_item.get(f'release_date'))
+        if f'recommendations' in dict_item.keys():
+            self.recommendations = dict(dict_item.get(f'recommendations'))
+        if f'supported_languages' in dict_item.keys():
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'supported_languages')))
+            self.supported_languages = str(_tmp_str)
+        # Pricing
         if f'' in dict_item.keys():
-            self.name = str(f'')
-        if f'' in dict_item.keys():
-            self.type = str(f'')
-        if f'' in dict_item.keys():
-            self.release_date = dict({})
-        if f'' in dict_item.keys():
-            self.recommendations = dict({})
-            self.supported_languages = str(f'')
-            # Pricing
             self.is_free = bool(False)
+        if f'' in dict_item.keys():
             self.price_overview = dict({})
+        if f'' in dict_item.keys():
             self.dlc = list([])
+        if f'' in dict_item.keys():
             self.package_groups = list([])
+        if f'' in dict_item.keys():
             self.packages = list([])
-            # Categories information
+        # Categories information
+        if f'' in dict_item.keys():
             self.categories = dict({})
+        if f'' in dict_item.keys():
             self.genres = list([])
+        if f'' in dict_item.keys():
             self.achievements = dict({})
-            # Developer and publisher info including support and website link
+        # Developer and publisher info including support and website link
+        if f'' in dict_item.keys():
             self.developers = list([])
+        if f'' in dict_item.keys():
             self.publishers = list([])
+        if f'' in dict_item.keys():
             self.legal_notice = str(f'')
+        if f'' in dict_item.keys():
             self.support_info = dict({})
+        if f'' in dict_item.keys():
             self.website = str(f'')
+        if f'' in dict_item.keys():
             self.ext_user_account_notice = str(f'')
-            # Metacritic
+        # Metacritic
+        if f'' in dict_item.keys():
             self.metacritic = dict({})
-            # Description and about
+        # Description and about
+        if f'' in dict_item.keys():
             self.short_description = str(f'')
+        if f'' in dict_item.keys():
             self.detailed_description = str(f'')
+        if f'' in dict_item.keys():
             self.about_the_game = str(f'')
-            # Image and screenshots
+        # Image and screenshots
+        if f'' in dict_item.keys():
             self.background = str(f'')
+        if f'' in dict_item.keys():
             self.header_image = str(f'')
+        if f'' in dict_item.keys():
             self.screenshots = list([])
+        if f'' in dict_item.keys():
             self.movies = list([])
-            # Platforms and requirements information
+        # Platforms and requirements information
+        if f'' in dict_item.keys():
             self.platforms = dict({})
+        if f'' in dict_item.keys():
             self.linux_requirements = dict({})
+        if f'' in dict_item.keys():
             self.mac_requirements = dict({})
+        if f'' in dict_item.keys():
             self.pc_requirements = dict({})
+        if f'' in dict_item.keys():
             self.controller_support = str(f'')
-            # Age information
+        # Age information
+        if f'' in dict_item.keys():
             self.required_age = str(f'')
 
-            # Data we fetch from ProtonDB
+        # Data we fetch from ProtonDB
+        if f'' in dict_item.keys():
             self.confidence = str(f'')
+        if f'' in dict_item.keys():
             self.score = float(0.000)
+        if f'' in dict_item.keys():
             self.tier = str(f'')
+        if f'' in dict_item.keys():
             self.total = int(-1)
+        if f'' in dict_item.keys():
             self.trendingTier = str(f'')
+        if f'' in dict_item.keys():
             self.bestReportedTier = str(f'')
 
-            # Derivate data
+        # Derivate data
+        if f'' in dict_item.keys():
             self.native = bool(False)
+        if f'' in dict_item.keys():
             self.steam_price_euro = float(0.000)
+        if f'' in dict_item.keys():
             self.steam_price_us = float(0.000)
 
 
