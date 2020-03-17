@@ -218,91 +218,91 @@ class Data(object):
             _tmp_str = core.html_to_discord(str(dict_item.get(f'supported_languages')))
             self.supported_languages = str(_tmp_str)
         # Pricing
-        if f'' in dict_item.keys():
-            self.is_free = bool(False)
-        if f'' in dict_item.keys():
-            self.price_overview = dict({})
-        if f'' in dict_item.keys():
-            self.dlc = list([])
-        if f'' in dict_item.keys():
-            self.package_groups = list([])
-        if f'' in dict_item.keys():
-            self.packages = list([])
+        if f'is_free' in dict_item.keys():
+            self.is_free = bool(dict_item.get(f'is_free'))
+        if f'price_overview' in dict_item.keys():
+            self.price_overview = dict(dict_item.get(f'price_overview'))
+        if f'dlc' in dict_item.keys():
+            self.dlc = list(dict_item.get(f'dlc'))
+        if f'package_groups' in dict_item.keys():
+            self.package_groups = list(dict_item.get(f'package_groups'))
+        if f'packages' in dict_item.keys():
+            self.packages = list(dict_item.get(f'packages'))
         # Categories information
-        if f'' in dict_item.keys():
-            self.categories = dict({})
-        if f'' in dict_item.keys():
-            self.genres = list([])
-        if f'' in dict_item.keys():
-            self.achievements = dict({})
+        if f'categories' in dict_item.keys():
+            self.categories = dict(dict_item.get(f'categories'))
+        if f'genres' in dict_item.keys():
+            self.genres = list(dict_item.get(f'genres'))
+        if f'achievements' in dict_item.keys():
+            self.achievements = dict(dict_item.get(f'achievements'))
         # Developer and publisher info including support and website link
-        if f'' in dict_item.keys():
-            self.developers = list([])
-        if f'' in dict_item.keys():
-            self.publishers = list([])
-        if f'' in dict_item.keys():
-            self.legal_notice = str(f'')
-        if f'' in dict_item.keys():
-            self.support_info = dict({})
-        if f'' in dict_item.keys():
-            self.website = str(f'')
-        if f'' in dict_item.keys():
-            self.ext_user_account_notice = str(f'')
+        if f'developers' in dict_item.keys():
+            self.developers = list(dict_item.get(f'developers'))
+        if f'publishers' in dict_item.keys():
+            self.publishers = list(dict_item.get(f'publishers'))
+        if f'legal_notice' in dict_item.keys():
+            self.legal_notice = str(dict_item.get(f'legal_notice'))
+        if f'support_info' in dict_item.keys():
+            self.support_info = dict(dict_item.get(f'support_info'))
+        if f'website' in dict_item.keys():
+            self.website = str(dict_item.get(f'website'))
+        if f'ext_user_account_notice' in dict_item.keys():
+            self.ext_user_account_notice = str(dict_item.get(f'ext_user_account_notice'))
         # Metacritic
-        if f'' in dict_item.keys():
-            self.metacritic = dict({})
+        if f'metacritic' in dict_item.keys():
+            self.metacritic = dict(dict_item.get(f'metacritic'))
         # Description and about
-        if f'' in dict_item.keys():
-            self.short_description = str(f'')
-        if f'' in dict_item.keys():
-            self.detailed_description = str(f'')
-        if f'' in dict_item.keys():
-            self.about_the_game = str(f'')
+        if f'short_description' in dict_item.keys():
+            self.short_description = str(dict_item.get(f'short_description'))
+        if f'detailed_description' in dict_item.keys():
+            self.detailed_description = str(dict_item.get(f'detailed_description'))
+        if f'about_the_game' in dict_item.keys():
+            self.about_the_game = str(dict_item.get(f'about_the_game'))
         # Image and screenshots
-        if f'' in dict_item.keys():
-            self.background = str(f'')
-        if f'' in dict_item.keys():
-            self.header_image = str(f'')
-        if f'' in dict_item.keys():
-            self.screenshots = list([])
-        if f'' in dict_item.keys():
-            self.movies = list([])
+        if f'background' in dict_item.keys():
+            self.background = str(dict_item.get(f'background'))
+        if f'header_image' in dict_item.keys():
+            self.header_image = str(dict_item.get(f'header_image'))
+        if f'screenshots' in dict_item.keys():
+            self.screenshots = list(dict_item.get(f'screenshots'))
+        if f'movies' in dict_item.keys():
+            self.movies = list(dict_item.get(f'movies'))
         # Platforms and requirements information
-        if f'' in dict_item.keys():
-            self.platforms = dict({})
-        if f'' in dict_item.keys():
-            self.linux_requirements = dict({})
-        if f'' in dict_item.keys():
-            self.mac_requirements = dict({})
-        if f'' in dict_item.keys():
-            self.pc_requirements = dict({})
-        if f'' in dict_item.keys():
-            self.controller_support = str(f'')
+        if f'platforms' in dict_item.keys():
+            self.platforms = dict(dict_item.get(f'platforms'))
+        if f'linux_requirements' in dict_item.keys():
+            self.linux_requirements = dict(dict_item.get(f'linux_requirements'))
+        if f'mac_requirements' in dict_item.keys():
+            self.mac_requirements = dict(dict_item.get(f'mac_requirements'))
+        if f'pc_requirements' in dict_item.keys():
+            self.pc_requirements = dict(dict_item.get(f'pc_requirements'))
+        if f'controller_support' in dict_item.keys():
+            self.controller_support = str(dict_item.get(f'controller_support'))
         # Age information
-        if f'' in dict_item.keys():
-            self.required_age = str(f'')
+        if f'required_age' in dict_item.keys():
+            self.required_age = str(dict_item.get(f'required_age'))
 
         # Data we fetch from ProtonDB
-        if f'' in dict_item.keys():
-            self.confidence = str(f'')
-        if f'' in dict_item.keys():
-            self.score = float(0.000)
-        if f'' in dict_item.keys():
-            self.tier = str(f'')
-        if f'' in dict_item.keys():
-            self.total = int(-1)
-        if f'' in dict_item.keys():
-            self.trendingTier = str(f'')
-        if f'' in dict_item.keys():
-            self.bestReportedTier = str(f'')
+        if f'confidence' in dict_item.keys():
+            self.confidence = str(dict_item.get(f'confidence'))
+        if f'score' in dict_item.keys():
+            self.score = float(dict_item.get(f'score'))
+        if f'tier' in dict_item.keys():
+            self.tier = str(dict_item.get(f'tier'))
+        if f'total' in dict_item.keys():
+            self.total = int(dict_item.get(f'total'))
+        if f'trendingTier' in dict_item.keys():
+            self.trendingTier = str(dict_item.get(f'trendingTier'))
+        if f'bestReportedTier' in dict_item.keys():
+            self.bestReportedTier = str(dict_item.get(f'bestReportedTier'))
 
         # Derivate data
-        if f'' in dict_item.keys():
-            self.native = bool(False)
-        if f'' in dict_item.keys():
-            self.steam_price_euro = float(0.000)
-        if f'' in dict_item.keys():
-            self.steam_price_us = float(0.000)
+        if f'native' in dict_item.keys():
+            self.native = bool(dict_item.get(f'native'))
+        if f'steam_price_euro' in dict_item.keys():
+            self.steam_price_euro = float(dict_item.get(f'steam_price_euro'))
+        if f'steam_price_us' in dict_item.keys():
+            self.steam_price_us = float(dict_item.get(f'steam_price_us'))
 
 
 if __name__ == f'__main__':
