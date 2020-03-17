@@ -253,11 +253,14 @@ class Data(object):
             self.metacritic = dict(dict_item.get(f'metacritic'))
         # Description and about
         if f'short_description' in dict_item.keys():
-            self.short_description = str(dict_item.get(f'short_description'))
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'short_description')))
+            self.short_description = str(_tmp_str)
         if f'detailed_description' in dict_item.keys():
-            self.detailed_description = str(dict_item.get(f'detailed_description'))
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'detailed_description')))
+            self.detailed_description = str(_tmp_str)
         if f'about_the_game' in dict_item.keys():
-            self.about_the_game = str(dict_item.get(f'about_the_game'))
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'about_the_game')))
+            self.about_the_game = str(_tmp_str)
         # Image and screenshots
         if f'background' in dict_item.keys():
             self.background = str(dict_item.get(f'background'))
@@ -271,11 +274,14 @@ class Data(object):
         if f'platforms' in dict_item.keys():
             self.platforms = dict(dict_item.get(f'platforms'))
         if f'linux_requirements' in dict_item.keys():
-            self.linux_requirements = dict(dict_item.get(f'linux_requirements'))
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'linux_requirements')))
+            self.linux_requirements = dict(_tmp_str)
         if f'mac_requirements' in dict_item.keys():
-            self.mac_requirements = dict(dict_item.get(f'mac_requirements'))
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'mac_requirements')))
+            self.mac_requirements = dict(_tmp_str)
         if f'pc_requirements' in dict_item.keys():
-            self.pc_requirements = dict(dict_item.get(f'pc_requirements'))
+            _tmp_str = core.html_to_discord(str(dict_item.get(f'pc_requirements')))
+            self.pc_requirements = dict(_tmp_str)
         if f'controller_support' in dict_item.keys():
             self.controller_support = str(dict_item.get(f'controller_support'))
         # Age information
