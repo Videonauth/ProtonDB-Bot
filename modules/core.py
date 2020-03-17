@@ -485,7 +485,7 @@ def html_to_discord(html: str) -> str:
     _output = str(f'')
     _command = str(f'')
     _no_output = bool(False)
-    for _value in _tmp_str[0:len(_tmp_str) - 1]:
+    for _value in _tmp_str[0:len(_tmp_str)]:
         if _value == f'<':
             _no_output = bool(True)
             _value = str(f'')
