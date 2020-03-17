@@ -20,6 +20,7 @@ import json
 # import requests
 import logging
 # import shutil
+import re
 import subprocess
 from contextlib import suppress
 
@@ -473,6 +474,56 @@ def dir_create(path: str) -> bool:
         exit(1)
     else:
         return True
+
+
+def html_to_discord(html: str) -> str:
+    # removing all of windows like carriage_return/newline combinations
+    _tmp_str = html
+    if f'\r\n' in _tmp_str:
+        _tmp_str = _tmp_str.replace(f'\r\n', f'')
+    # begin reading through the text and replace html codes
+    _output = str(f'')
+    _command = str(f'')
+    _no_output = bool(False)
+    for _value in _tmp_str[0:len(_tmp_str) - 1]:
+        if _value == f'<':
+            _no_output = bool(True)
+            _value = str(f'')
+        if _value == f'>':
+            _no_output = bool(False)
+            # TODO: create replacement _value according to _command's content
+            _value = str(f'')
+            _command_list = list(_command.split(f' '))
+            _command = str(f'')
+            if _command_list[0].strip(f' ') == f'br':
+                _output += str(f'\n')
+            if _command_list[0].strip(f' ') == f'strong':
+                _output += str(f'**')
+            if _command_list[0].strip(f' ') == f'/strong':
+                _output += str(f'**')
+            if _command_list[0].strip(f' ') == f'b':
+                _output += str(f'**')
+            if _command_list[0].strip(f' ') == f'/b':
+                _output += str(f'**')
+            if _command_list[0].strip(f' ') == f'em':
+                _output += str(f'*')
+            if _command_list[0].strip(f' ') == f'/em':
+                _output += str(f'*')
+            if _command_list[0].strip(f' ') == f'i':
+                _output += str(f'*')
+            if _command_list[0].strip(f' ') == f'/i':
+                _output += str(f'*')
+
+        if not _no_output:
+            _output += _value
+        else:
+            _command += _value
+
+    # making sure we did not get more than two newline characters in a row
+    nlf = re.compile(r'\n(\n)+')
+    _output = nlf.sub(f'\n\n', _output)
+
+    return _output
 
 
 if __name__ == '__main__':
