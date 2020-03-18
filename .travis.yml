@@ -1,10 +1,11 @@
-dist: xenial
+dist: bionic
 language: python
 sudo: false
 
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
 
 install:
   - pip3 install -r requirements.txt --upgrade
