@@ -28,7 +28,7 @@ class Data(object):
         self.count_shown = int(0)
 
         # Initialize the list of known abrevations.
-        self.known_abrevations = list([])
+        self.known_abbreviations = list([])
 
         # The data we get from the app-list.json from steam
         self.steam_id = int(-1)
@@ -107,7 +107,7 @@ class Data(object):
             last_shown=self.last_shown,
             count_shown=self.count_shown,
             # Initialize the list of known abrevations.
-            known_abrevations=self.known_abrevations,
+            known_abbreviations=self.known_abbreviations,
             # The data we get from the app-list.json from steam
             steam_id=self.steam_id,
             steam_name=self.steam_name,
@@ -195,8 +195,8 @@ class Data(object):
         if f'count_shown' in dict_item.keys():
             self.count_shown = int(dict_item.get(f'count_shown'))
         # Initialize the list of known abrevations.
-        if f'known_abrevations' in dict_item.keys():
-            self.known_abrevations = list(dict_item.get(f'known_abrevations'))
+        if f'known_abbreviations' in dict_item.keys():
+            self.known_abbreviations = list(dict_item.get(f'known_abbreviations'))
         # The data we get from the app-list.json from steam
         if f'steam_id' in dict_item.keys():
             if self.steam_id == -1 and int(dict_item.get(f'steam_id')) != -1:
