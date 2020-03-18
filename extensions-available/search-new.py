@@ -130,7 +130,7 @@ class Search(commands.Cog):
             _abbreviation = str(f'')
             if _parameters_list[1] == f'abbr.':
                 for _value in _parameters_list[2: len(_parameters_list)]:
-                    _abbreviation += f'{_value} '
+                    _abbreviation += f'{_value} '.lower()
                 _result.known_abbreviations.append(_abbreviation[0: len(_abbreviation) - 1])
             _output = str(f'Learning "{_abbreviation[0: len(_abbreviation) - 1]}" abbreviation '
                           f'for "{_result.steam_id}: {_result.steam_name}".')
@@ -230,7 +230,7 @@ class Search(commands.Cog):
                 _search_log.debug(f'Trying to fetch steamfront data.')
                 try:
                     _tmp_steamfront = _steam_client.getApp(appid=str(_result.steam_id))
-                except steamfront.errors.AppNotFound as _e:
+                except steamfront.errors.AppNotFound:
                     # TODO: get the data elsewhere if steamfront denies us data means usually
                     #  the game isn't available in germany
                     _search_log.debug(f'Steamfront gave an AppNotFound error.')
