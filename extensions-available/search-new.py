@@ -103,45 +103,64 @@ class Search(commands.Cog):
 
     @commands.command(pass_context=True, hidden=True)
     async def db(self, context, command, *, text=f''):
-        if command == f'dump':
-            _save_output = dict({})
-            for _key, _value in _data.items():
-                _save_output.update({_value.steam_id: _value.to_dict()})
-            core.dict_to_json(_save_output, f'data/data.json')
-            _output = str(f'Dumped database to file: "data/data.json".')
-            _search_log.debug(_output)
+        _search_log.info(f'context.author = {context.author}')
+        _search_log.debug(f'context.message.author.mention = {context.message.author.mention}')
+        _search_log.debug(f'context.message.author.id = {context.message.author.id}')
+        _search_log.info(f'context.guild = {context.guild}')
+        _search_log.info(f'context.channel = {context.channel}')
+        _search_log.debug(f'context.message.content = {context.message.content}')
+        _search_log.info(f'command = {command}')
+        _search_log.info(f'text = {text}')
+        _config = core.json_to_dict(f'config/bot-config.json')
+        if str(context.author) == str(_config.get(f'bot_owner')):
+            if command == f'dump':
+                _save_output = dict({})
+                for _key, _value in _data.items():
+                    _save_output.update({_value.steam_id: _value.to_dict()})
+                core.dict_to_json(_save_output, f'data/data.json')
+                _output = str(f'Dumped database to file: "data/data.json".')
+                _search_log.debug(_output)
+                _embed = discord.Embed(
+                    title=f'Success:',
+                    description=_output,
+                    colour=discord.Colour.green()
+                )
+                await context.send(embed=_embed)
+                return
+            if command == f'teach':
+                _parameters_list = text.split(f' ')
+                # First in the list has to be the steam_id i want to teach something to
+                # we get the db entry from _data
+                _result = Data()
+                _tmp_int = int(_parameters_list[0])
+                _tmp_object = _data.get(_tmp_int)
+                _tmp_dict = _tmp_object.to_dict()
+                _result.from_dict(_tmp_dict)
+                # Second in the list has to be the kind of data to teach
+                _abbreviation = str(f'')
+                if _parameters_list[1] == f'abbr.':
+                    for _value in _parameters_list[2: len(_parameters_list)]:
+                        _abbreviation += f'{_value} '.lower()
+                    _result.known_abbreviations.append(_abbreviation[0: len(_abbreviation) - 1])
+                _output = str(f'Learning "{_abbreviation[0: len(_abbreviation) - 1]}" abbreviation '
+                              f'for "{_result.steam_id}: {_result.steam_name}".')
+                _search_log.debug(_output)
+                _embed = discord.Embed(
+                    title=f'Success:',
+                    description=_output,
+                    colour=discord.Colour.green()
+                )
+                await context.send(embed=_embed)
+                _data.update({_result.steam_id: _result})
+                return
+        else:
+            _search_log.info(f'{context.author} tried to access the database functions, but had no permission.')
             _embed = discord.Embed(
-                title=f'Success:',
-                description=_output,
-                colour=discord.Colour.green()
+                title=f'Warning:',
+                description=f'You are not the bot owner. Ignoring command.',
+                colour=discord.Colour.orange()
             )
             await context.send(embed=_embed)
-            return
-        if command == f'teach':
-            _parameters_list = text.split(f' ')
-            # First in the list has to be the steam_id i want to teach something to
-            # we get the db entry from _data
-            _result = Data()
-            _tmp_int = int(_parameters_list[0])
-            _tmp_object = _data.get(_tmp_int)
-            _tmp_dict = _tmp_object.to_dict()
-            _result.from_dict(_tmp_dict)
-            # Second in the list has to be the kind of data to teach
-            _abbreviation = str(f'')
-            if _parameters_list[1] == f'abbr.':
-                for _value in _parameters_list[2: len(_parameters_list)]:
-                    _abbreviation += f'{_value} '.lower()
-                _result.known_abbreviations.append(_abbreviation[0: len(_abbreviation) - 1])
-            _output = str(f'Learning "{_abbreviation[0: len(_abbreviation) - 1]}" abbreviation '
-                          f'for "{_result.steam_id}: {_result.steam_name}".')
-            _search_log.debug(_output)
-            _embed = discord.Embed(
-                title=f'Success:',
-                description=_output,
-                colour=discord.Colour.green()
-            )
-            await context.send(embed=_embed)
-            _data.update({_result.steam_id: _result})
             return
 
     @commands.command(pass_context=True)
