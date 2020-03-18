@@ -61,7 +61,6 @@ _search_log = logging.getLogger(f'search-new-log')
 _steam_client = steamfront.Client()
 
 _data = dict({})
-_save_output = dict({})
 
 
 class Search(commands.Cog):
@@ -76,7 +75,9 @@ class Search(commands.Cog):
                 _tmp_result.from_dict(_value)
                 _data.update({_tmp_result.steam_id: _tmp_result})
             _tmp_data.clear()
+            _search_log.debug(f'Data entries total: {len(_data)}.')
         else:
+            _save_output = dict({})
             _tmp_data = list([])
             _url = __steam_app_list__
             _response = requests.get(
@@ -96,49 +97,52 @@ class Search(commands.Cog):
                 _data.update({_tmp_result.steam_id: _tmp_result})
                 _save_output.update({_tmp_result.steam_id: _tmp_result.to_dict()})
             core.dict_to_json(_save_output, f'data/data.json')
+            _search_log.debug(f'Data entries total: {len(_data)}.')
             _tmp_data = list([])
             _save_output.clear()
 
     @commands.command(pass_context=True, hidden=True)
-    async def dumpdb(self, context):
-        """
-        Dumps the database to file.
-
-        Usage: [prefix]dumpdb
-
-        :param context: The message context.
-        """
-        _search_log.info(f'context.author = {context.author}')
-        _search_log.debug(f'context.message.author.mention = {context.message.author.mention}')
-        _search_log.debug(f'context.message.author.id = {context.message.author.id}')
-        _search_log.info(f'context.guild = {context.guild}')
-        _search_log.info(f'context.channel = {context.channel}')
-        _search_log.debug(f'context.message.content = {context.message.content}')
-        _config = core.json_to_dict(f'config/bot-config.json')
-        _permissions = core.json_to_dict(f'config/permissions.json')
-
-        _admins = _permissions.get(f'admins')
-
-        _allowed = False
-        if str(context.author) == str(_config.get(f'bot_owner')):
-            _allowed = True
-        if str(context.author) in _admins:
-            _allowed = True
-        if not _allowed:
+    async def db(self, context, command, *, text=f''):
+        if command == f'dump':
+            _save_output = dict({})
+            for _key, _value in _data.items():
+                _save_output.update({_value.steam_id: _value.to_dict()})
+            core.dict_to_json(_save_output, f'data/data.json')
+            _output = str(f'Dumped database to file: "data/data.json".')
+            _search_log.debug(_output)
             _embed = discord.Embed(
-                title=f'Warning:',
-                description=f'Only bot owner and admins can issue this command.',
-                colour=discord.Colour.red()
+                title=f'Success:',
+                description=_output,
+                colour=discord.Colour.green()
             )
             await context.send(embed=_embed)
             return
-
-        _save_output.clear()
-        for _key, _value in _data.items():
-            _save_output.update({_key: _value.to_dict()})
-        core.dict_to_json(_save_output, f'data/data.json')
-        _save_output.clear()
-        return
+        if command == f'teach':
+            _parameters_list = text.split(f' ')
+            # First in the list has to be the steam_id i want to teach something to
+            # we get the db entry from _data
+            _result = Data()
+            _tmp_int = int(_parameters_list[0])
+            _tmp_object = _data.get(_tmp_int)
+            _tmp_dict = _tmp_object.to_dict()
+            _result.from_dict(_tmp_dict)
+            # Second in the list has to be the kind of data to teach
+            _abbreviation = str(f'')
+            if _parameters_list[1] == f'abbr.':
+                for _value in _parameters_list[2: len(_parameters_list)]:
+                    _abbreviation += f'{_value} '
+                _result.known_abbreviations.append(_abbreviation[0: len(_abbreviation) - 1])
+            _output = str(f'Learning "{_abbreviation[0: len(_abbreviation) - 1]}" abbreviation '
+                          f'for "{_result.steam_id}: {_result.steam_name}".')
+            _search_log.debug(_output)
+            _embed = discord.Embed(
+                title=f'Success:',
+                description=_output,
+                colour=discord.Colour.green()
+            )
+            await context.send(embed=_embed)
+            _data.update({_result.steam_id: _result})
+            return
 
     @commands.command(pass_context=True)
     async def search(self, context, *, search_text=f''):
@@ -186,24 +190,24 @@ class Search(commands.Cog):
 
         _output = f''
         _result = Data()
+        _web_result = bool(False)
         if search_text != f'':
             # Searching own database
             for _key, _value in _data.items():
                 if str(_value.steam_id) == search_text:
-                    _search_log.debug(f'Match found in steam_id for search_text={search_text}.')
+                    _search_log.debug(f'Match found in steam_id for search_text = {search_text}.')
                     _result.from_dict(_value.to_dict())
                     break
-                if str(_value.steam_name) == search_text:
-                    _search_log.debug(f'Match found in steam_name for search_text={search_text}.')
+                if str(_value.steam_name).lower() == search_text.lower():
+                    _search_log.debug(f'Match found in steam_name for search_text = {search_text}.')
                     _result.from_dict(_value.to_dict())
                     break
-                if search_text in _value.known_abrevations:
-                    _search_log.debug(f'Match found in known_abrevations for search_text={search_text}.')
+                if search_text.lower() in _value.known_abbreviations:
+                    _search_log.debug(f'Match found in known_abbreviations for search_text = {search_text}.')
                     _result.from_dict(_value.to_dict())
                     break
-            # searching Steam store
+            # Searching Steam. url=https://store.steampowered.com/search/?term=
             if _result.steam_id == -1:
-                # TODO: if not present in own db or not found search steampowered.com
                 _url = f'{__steam_search__}{search_text.replace(" ", "+")}'
                 _response = requests.get(
                     url=_url,
@@ -220,14 +224,30 @@ class Search(commands.Cog):
                     _tmp_list = _tmp_list[1].split(f'"')
                     _tmp_data = int(_tmp_list[0])
                     _tmp_db_entry = _data.get(_tmp_data)
-                    _tmp_db_entry.known_abrevations.append(search_text)
-                    if (_tmp_db_entry.last_updated_steamfront + __wait_time__) < time.time():
-                        _tmp_steamfront = _steam_client.getApp(appid=str(_tmp_data))
-                        _tmp_db_entry.from_dict(_tmp_steamfront.raw)
-                        print(_tmp_db_entry.to_dict())
-                        # print(_tmp_steamfront.raw)
-                        # core.dict_to_json(_tmp_steamfront.raw, f'data/steamfront.json')
-            # TODO: update own db
+                    _result.from_dict(_tmp_db_entry.to_dict())
+                    _web_result = bool(True)
+            if (_result.last_updated_steamfront + __wait_time__) < time.time():
+                _search_log.debug(f'Trying to fetch steamfront data.')
+                try:
+                    _tmp_steamfront = _steam_client.getApp(appid=str(_result.steam_id))
+                except steamfront.errors.AppNotFound as _e:
+                    # TODO: get the data elsewhere if steamfront denies us data means usually
+                    #  the game isn't available in germany
+                    _search_log.debug(f'Steamfront gave an AppNotFound error.')
+                    _result.last_updated_steamfront = time.time()
+                    pass
+                else:
+                    _search_log.debug(f'Steamfront data successfully updated.')
+                    _result.from_dict(_tmp_steamfront.raw)
+                    _result.last_updated_steamfront = time.time()
+            if search_text.lower() not in _result.known_abbreviations:
+                if not _web_result:
+                    _result.known_abbreviations.append(search_text.lower())
+            # Count up the number of being shown
+            _result.last_shown = time.time()
+            _result.count_shown += int(1)
+            # Update own db
+            _data.update({_result.steam_id: _result})
             if _result.steam_id != -1:
                 # TODO: output result
                 _output += f'{_result.steam_name}.\n'
