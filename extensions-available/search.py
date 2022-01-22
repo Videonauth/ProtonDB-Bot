@@ -16,6 +16,7 @@ __duck__ = f'https://duckduckgo.com/?q='
 __steam__ = f'https://store.steampowered.com/app/'
 __steamdb__ = 'https://steamdb.info/app/'
 __protondb__ = 'https://www.protondb.com/api/v1/reports/summaries/'
+__protondbsearch__ = 'https://www.protondb.com/search?q='
 __strip_pattern__ = r'[a-zA-Z.:=/<>?]'
 
 # ---------------------------------------------------------------------------
@@ -221,7 +222,8 @@ class Search(commands.Cog):
                 _output += f'I\'m sorry, but I could not find any usable input data for your search term.\n'
                 _output += f'\n'
                 _output += f'[Search with Google.]({__google__ + search_text.replace(" ", "+")})\n\n'
-                _output += f'[Search with Duck Duck Go.]({__duck__ + search_text.replace(" ", "*")})\n'
+                _output += f'[Search with Duck Duck Go.]({__duck__ + search_text.replace(" ", "*")})\n\n'
+                _output += f'[Search on ProtonDB.]({__protondbsearch__ + search_text.replace(" ", "+")})\n'
                 _embed = discord.Embed(
                     title=f'Search failure:',
                     description=_output,
